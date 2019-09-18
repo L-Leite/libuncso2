@@ -45,6 +45,26 @@ extern "C"
     uncso2_EncryptedFile_Free(EncryptedFile_t fileHandle);
 
     /**
+     * @brief Does the buffer data's have an encrypted file header?
+     *
+     * Validates the data's size and checks the header's magic signature.
+     *
+     * @param pData The buffer data.
+     * @param iDataSize The buffer's size.
+     * @return true If the buffer data has an encrypted file header.
+     * @return false If the buffer data does NOT have an encrypted file header.
+     */
+    UNCSO2_API bool UNCSO2_CALLMETHOD
+    uncso2_EncryptedFile_IsEncryptedFile(void* pData, const uint64_t iDataSize);
+
+    /**
+     * @brief Gets the size of an encrypted file's header.
+     *
+     * @return uint64_t The size of an encrypted file's header.
+     */
+    UNCSO2_API uint64_t UNCSO2_CALLMETHOD uncso2_EncryptedFile_GetHeaderSize();
+
+    /**
      * @brief Decrypts the file
      *
      * Decrypts the file through the same decryption method in PkgIndex.

@@ -32,6 +32,18 @@ extern "C"
         delete pFile;
     }
 
+    bool UNCSO2_CALLMETHOD
+    uncso2_EncryptedFile_IsEncryptedFile(void* pData, const uint64_t iDataSize)
+    {
+        return uc2::EncryptedFile::IsEncryptedFile(static_cast<uint8_t*>(pData),
+                                                   iDataSize);
+    }
+
+    uint64_t UNCSO2_CALLMETHOD uncso2_EncryptedFile_GetHeaderSize()
+    {
+        return uc2::EncryptedFile::GetHeaderSize();
+    }
+
     bool UNCSO2_CALLMETHOD uncso2_EncryptedFile_Decrypt(
         EncryptedFile_t fileHandle, void** outBuffer, uint64_t* outSize)
     {
