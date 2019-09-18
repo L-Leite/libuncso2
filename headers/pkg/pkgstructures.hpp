@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
 
 namespace uc2
 {
@@ -22,7 +22,8 @@ struct PkgHeader_t
     // skip the hash since it's not encrypted
     // char szHash[32 + 1];
     char szDirectoryPath[260 + 1];
-    uint32_t Unknown261;
+    uint32_t UnknownVal;  // it's always (?) zero, so we use it to validate the
+                          // header
     uint32_t iEntries;
     uint8_t Pad[3];
 };
@@ -34,9 +35,10 @@ struct PkgHeaderTfo_t
 {
     // skip the hash since it's not encrypted
     // char szHash[32 + 1];
-    uint32_t Unknown00;
+    uint32_t UnknownVal;  // it's always (?) zero, so we use it to validate the
+                          // header
     uint32_t iEntries;
-    uint32_t Unknown08;
+    uint32_t UnknownVal2;
     uint32_t Padding;
 };
 

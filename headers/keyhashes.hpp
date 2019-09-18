@@ -1,4 +1,4 @@
-#include <stdint.h>
+#include <cstdint>
 #include <array>
 #include <gsl/gsl>
 #include <string_view>
