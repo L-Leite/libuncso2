@@ -54,6 +54,26 @@ extern "C"
     uncso2_LzmaTexture_GetOriginalSize(LzmaTexture_t texHandle);
 
     /**
+     * @brief Does the buffer data's have an LZMA texture header?
+     *
+     * Validates the data's size and checks the header's magic signature.
+     *
+     * @param pData The buffer data.
+     * @param iDataSize THe buffer's size.
+     * @return true If the buffer data has an LZMA texture header.
+     * @return false If the buffer data does NOT have an LZMA texture header.
+     */
+    UNCSO2_API bool uncso2_LzmaTexture_IsLzmaTexture(void* pData,
+                                                     const uint64_t iDataSize);
+
+    /**
+     * @brief Gets the size of a compressed texture's header.
+     *
+     * @return uint64_t The size of a compressed texture's header.
+     */
+    UNCSO2_API uint64_t uncso2_LzmaTexture_GetHeaderSize();
+
+    /**
      * @brief Decompresses the texture.
      *
      * Decompresses the texture using LZMA.

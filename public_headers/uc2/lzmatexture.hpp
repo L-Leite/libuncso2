@@ -12,7 +12,7 @@
 
 #include "uc2defs.h"
 
-#include <stdint.h>
+#include <cstdint>
 #include <memory>
 #include <vector>
 
@@ -40,9 +40,9 @@ public:
      *
      * Retrieves the real texture's size from its compressed LZMA header.
      *
-     * @return uint64_t the texture's real size.
+     * @return std::uint64_t the texture's real size.
      */
-    virtual uint64_t GetOriginalSize() = 0;
+    virtual std::uint64_t GetOriginalSize() = 0;
 
     /**
      * @brief Decompresses the texture.
@@ -58,7 +58,28 @@ public:
      * @return true if it was decompressed successfully.
      * @return false if it failed to decompress.
      */
-    virtual bool Decompress(uint8_t* outBuffer, uint64_t outBufferSize) = 0;
+    virtual bool Decompress(std::uint8_t* outBuffer,
+                            std::uint64_t outBufferSize) = 0;
+
+    /**
+     * @brief Does the buffer data's have an LZMA texture header?
+     *
+     * Validates the data's size and checks the header's magic signature.
+     *
+     * @param pData The buffer data.
+     * @param iDataSize THe buffer's size.
+     * @return true If the buffer data has an LZMA texture header.
+     * @return false If the buffer data does NOT have an LZMA texture header.
+     */
+    static bool IsLzmaTexture(std::uint8_t* pData,
+                              const std::uint64_t iDataSize);
+
+    /**
+     * @brief Gets the size of a compressed texture's header.
+     *
+     * @return uint64_t The size of a compressed texture's header.
+     */
+    static uint64_t GetHeaderSize();
 
     /**
      * @brief Construct a new CompressedTexture object.
@@ -68,9 +89,23 @@ public:
      * This method throws exceptions:
      * - It throws std::invalid_argument when the texture's header is invalid.
      *
-     * @param texData A reference to the compressed texture's data
-     * @return ptr_t the new CompressedTexture object
+     * @param texData A reference to the compressed texture's data.
+     * @return ptr_t the new CompressedTexture object.
      */
-    static ptr_t Create(std::vector<uint8_t>& texData);
+    static ptr_t Create(std::vector<std::uint8_t>& texData);
+
+    /**
+     * @brief Construct a new CompressedTexture object.
+     *
+     * The texture's data input passed in texData is not modified.
+     *
+     * This method throws exceptions:
+     * - It throws std::invalid_argument when the texture's header is invalid.
+     *
+     * @param pData The texture's data buffer.
+     * @param iDataSize The texture's data buffer size.
+     * @return ptr_t the new CompressedTexture object.
+     */
+    static ptr_t Create(std::uint8_t* pData, const std::uint64_t iDataSize);
 };
 }  // namespace uc2

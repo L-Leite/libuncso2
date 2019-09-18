@@ -17,14 +17,19 @@ TEST_CASE("Can decompress LZMA'd VTFs", "[lzmavtf]")
 {
     SECTION("Decompressing texture file")
     {
-        auto [bWasRead, vIndexBuffer] = ReadFileToBuffer(cso2::TextureFilename);
+        auto [bWasRead, vTexBuffer] = ReadFileToBuffer(cso2::TextureFilename);
 
         REQUIRE(bWasRead == true);
-        REQUIRE(vIndexBuffer.empty() == false);
+        REQUIRE(vTexBuffer.empty() == false);
+
+        bool bIsLzmaTex = uc2::LzmaTexture::IsLzmaTexture(vTexBuffer.data(),
+                                                          vTexBuffer.size());
+
+        REQUIRE(bIsLzmaTex == true);
 
         try
         {
-            auto pTex = uc2::LzmaTexture::Create(vIndexBuffer);
+            auto pTex = uc2::LzmaTexture::Create(vTexBuffer);
 
             uint64_t iOrigSize = pTex->GetOriginalSize();
             REQUIRE(iOrigSize != 0);
@@ -48,13 +53,18 @@ TEST_CASE("Can decompress LZMA'd VTFs with C bindings", "[lzmavtf]")
 {
     SECTION("Decompressing texture file")
     {
-        auto [bWasRead, vIndexBuffer] = ReadFileToBuffer(cso2::TextureFilename);
+        auto [bWasRead, vTexBuffer] = ReadFileToBuffer(cso2::TextureFilename);
 
         REQUIRE(bWasRead == true);
-        REQUIRE(vIndexBuffer.empty() == false);
+        REQUIRE(vTexBuffer.empty() == false);
+
+        bool bIsLzmaTex = uncso2_LzmaTexture_IsLzmaTexture(vTexBuffer.data(),
+                                                           vTexBuffer.size());
+
+        REQUIRE(bIsLzmaTex == true);
 
         LzmaTexture_t pTexture =
-            uncso2_LzmaTexture_Create(vIndexBuffer.data(), vIndexBuffer.size());
+            uncso2_LzmaTexture_Create(vTexBuffer.data(), vTexBuffer.size());
         REQUIRE(pTexture != NULL);
 
         uint64_t iOrigSize = uncso2_LzmaTexture_GetOriginalSize(pTexture);

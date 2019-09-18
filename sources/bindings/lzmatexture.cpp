@@ -7,12 +7,10 @@ extern "C"
     LzmaTexture_t UNCSO2_CALLMETHOD uncso2_LzmaTexture_Create(void* texBuffer,
                                                               uint64_t texSize)
     {
-        gsl::span<uint8_t> texView(reinterpret_cast<uint8_t*>(texBuffer),
-                                   texSize);
-
         try
         {
-            auto newTex = uc2::LzmaTextureImpl::CreateSpan(texView);
+            auto newTex = uc2::LzmaTextureImpl::Create(
+                reinterpret_cast<uint8_t*>(texBuffer), texSize);
             return reinterpret_cast<LzmaTexture_t>(newTex.release());
         }
         catch (const std::exception& e)
@@ -45,6 +43,17 @@ extern "C"
         {
             return 0;
         }
+    }
+
+    bool uncso2_LzmaTexture_IsLzmaTexture(void* pData, const uint64_t iDataSize)
+    {
+        return uc2::LzmaTexture::IsLzmaTexture(static_cast<uint8_t*>(pData),
+                                               iDataSize);
+    }
+
+    uint64_t uncso2_LzmaTexture_GetHeaderSize()
+    {
+        return uc2::LzmaTexture::GetHeaderSize();
     }
 
     bool UNCSO2_CALLMETHOD uncso2_LzmaTexture_Decompress(
