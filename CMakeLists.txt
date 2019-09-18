@@ -14,7 +14,6 @@ endif ()
 #
 option(PKG_BUILD_SHARED "Build libuncso2 as a shared library" ON)
 option(PKG_BUILD_TESTS "Build tests" ${PKG_IS_STANDALONE})
-option(PKG_USE_SYSTEM_LIBS "Use system libraries when available" ON)
 option(PKG_DEPS_AS_SHARED_LIBS "Build libuncso2 dependencies as shared libraries" ON)
 option(PKG_USE_CLANG_FSAPI "Use libc++fs when available" OFF)
 
@@ -31,12 +30,6 @@ set(PKG_LIB_CRYPTOPP_CMAKE_DIR "${PKG_LIBS_DIR}/cryptopp-cmake")
 set(PKG_LIB_GSL_DIR "${PKG_LIBS_DIR}/gsl-lite")
 set(PKG_LIB_LZMA_DIR "${PKG_LIBS_DIR}/lzma")
 
-if(PKG_DEPS_AS_SHARED_LIBS)
-    set(BUILD_SHARED_LIBS TRUE)
-else()
-    set(BUILD_SHARED_LIBS FALSE)
-endif()
-
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 #
@@ -48,17 +41,19 @@ configure_file("${PKG_LIB_CRYPTOPP_CMAKE_DIR}/CMakeLists.txt" "${PKG_LIB_CRYPTOP
 configure_file("${PKG_LIB_CRYPTOPP_CMAKE_DIR}/cryptopp-config.cmake" "${PKG_LIB_CRYPTOPP_DIR}/" COPYONLY)
 
 # Disable Crypto++ testing
-set(BUILD_TESTING FALSE)
+set(BUILD_TESTING FALSE CACHE BOOL "" FORCE)
 
 # Only build Crypto++ either static or shared libraries
-if(PKG_DEPS_AS_SHARED_LIBS)
-    set(BUILD_STATIC FALSE)
+if(NOT WIN32)
+    if(PKG_DEPS_AS_SHARED_LIBS)
+        set(BUILD_STATIC FALSE)
+    else()
+        set(BUILD_SHARED FALSE)
+    endif()
 else()
+    # Don't build FIPS DLL 
     set(BUILD_SHARED FALSE)
 endif()
-
-# Enable Crypto++ CPU optimizations
-set(CRYPTOPP_NATIVE_ARCH TRUE)
 
 add_subdirectory("${PKG_LIB_CRYPTOPP_DIR}")
 set(CryptoPP_INCLUDE_DIRS "${PKG_LIB_CRYPTOPP_DIR}")
@@ -185,16 +180,14 @@ elseif(NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     target_link_libraries(uncso2 stdc++fs)
 endif()
 
-if(PKG_DEPS_AS_SHARED_LIBS)
-    if(WIN32)
-        message(STATUS
-            "libuncso2: Crypto++ is being linked as a DLL on Windows.\n"
-            "libuncso2: The Windows DLL is a FIPS DLL, see https://www.cryptopp.com/wiki/FIPS_DLL for more information\n"
-        )
+if(NOT WIN32)
+    if(PKG_DEPS_AS_SHARED_LIBS)
+        target_link_libraries(uncso2 cryptopp-shared)
+    else()
+        target_link_libraries(uncso2 cryptopp-static)
     endif()
-
-    target_link_libraries(uncso2 cryptopp-shared)
 else()
+    # Don't use FIPS DLL
     target_link_libraries(uncso2 cryptopp-static)
 endif()
 
