@@ -66,6 +66,6 @@ public:
      *
      * @returns std::string_view The patch version of libuncso2
      */
-    static const std::string_view GetVersionString();
+    static std::string_view GetVersionString();
 };
 }  // namespace uc2

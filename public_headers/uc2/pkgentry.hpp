@@ -49,11 +49,11 @@ public:
      * @param iBytesToDecrypt How many file bytes should be decrypted? Default
      * is zero, which means 'decrypt everything'.
      *
-     * @return std::pair<uint8_t*, uint64_t> the file's buffer pointer and the
-     * buffer's size
+     * @return std::pair<std::uint8_t*, std::uint64_t> the file's buffer pointer
+     * and the buffer's size
      */
-    virtual std::pair<uint8_t*, uint64_t> DecryptFile(
-        const uint64_t iBytesToDecrypt = 0) = 0;
+    virtual std::pair<std::uint8_t*, std::uint64_t> DecryptFile(
+        const std::uint64_t iBytesToDecrypt = 0) = 0;
 
     /**
      * @brief Get the file's path.
@@ -63,23 +63,23 @@ public:
 
     /**
      * @brief Get the file's offset in the pkg file.
-     * @return uint64_t The file's offset.
+     * @return std::uint64_t The file's offset.
      */
-    virtual uint64_t GetPkgFileOffset() = 0;
+    virtual std::uint64_t GetPkgFileOffset() = 0;
 
     /**
      * @brief Get the file's encrypted size.
      *
      * This usually includes the data's padding.
-     * @return uint64_t the file's encrypted size
+     * @return std::uint64_t the file's encrypted size
      */
-    virtual uint64_t GetEncryptedSize() = 0;
+    virtual std::uint64_t GetEncryptedSize() = 0;
 
     /**
      * @brief Get the file's decrypted size
-     * @return uint64_t the file's decrypted size
+     * @return std::uint64_t the file's decrypted size
      */
-    virtual uint64_t GetDecryptedSize() = 0;
+    virtual std::uint64_t GetDecryptedSize() = 0;
 
     /**
      * @brief Is this file encrypted?

@@ -79,7 +79,7 @@ public:
      *
      * @param newFileData The new data buffer.
      */
-    virtual void SetDataBuffer(std::vector<uint8_t>& newFileData) = 0;
+    virtual void SetDataBuffer(std::vector<std::uint8_t>& newFileData) = 0;
 
     /**
      * @brief Invalidate the stored buffer.
@@ -94,9 +94,9 @@ public:
      * It's enough to provide a buffer with the length returned by the
      * GetHeaderSize method. Any more data will be ignored.
      *
-     * @return uint64_t The PKG header's size.
+     * @return std::uint64_t The PKG header's size.
      */
-    virtual uint64_t GetFullHeaderSize() = 0;
+    virtual std::uint64_t GetFullHeaderSize() = 0;
 
     /**
      * @brief Get the PKG's MD5 hash string.
@@ -165,7 +165,8 @@ public:
      *
      * @return ptr_t the new PkgFile object
      */
-    static ptr_t Create(std::string szFilename, std::vector<uint8_t>& fileData,
+    static ptr_t Create(std::string szFilename,
+                        std::vector<std::uint8_t>& fileData,
                         std::string szEntryKey = {}, std::string szDataKey = {},
                         PkgFileOptions* options = nullptr);
 
@@ -174,8 +175,8 @@ public:
      *
      * @param bTfoPkg Should the Titanfall Online PKG header's size be
      * retrieved?
-     * @return uint64_t The PKG header's size.
+     * @return std::uint64_t The PKG header's size.
      */
-    static uint64_t GetHeaderSize(bool bTfoPkg);
+    static std::uint64_t GetHeaderSize(bool bTfoPkg);
 };
 }  // namespace uc2

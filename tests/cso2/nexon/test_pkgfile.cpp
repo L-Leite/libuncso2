@@ -15,7 +15,7 @@ TEST_CASE("Pkg file can be decrypted and parsed", "[pkgfile]")
 {
     SECTION("Can parse entries")
     {
-        for (size_t i = 0; i < cso2::NUM_PROVIDERS; i++)
+        for (std::size_t i = 0; i < cso2::NUM_PROVIDERS; i++)
         {
             auto [bWasRead, vFileBuffer] =
                 ReadFileToBuffer(cso2::PkgFilenames[i]);
@@ -35,7 +35,7 @@ TEST_CASE("Pkg file can be decrypted and parsed", "[pkgfile]")
                 REQUIRE(pPkgFile->GetEntries().size() ==
                         cso2::PackageFileCounts[i]);
 
-                size_t iCurIndex = 0;
+                std::size_t iCurIndex = 0;
                 for (auto&& entry : pPkgFile->GetEntries())
                 {
                     auto [fileData, fileDataLen] = entry->DecryptFile();
@@ -58,7 +58,7 @@ TEST_CASE("Pkg file partially decrypting an entry", "[pkgfile]")
 {
     SECTION("Can decrypt 16 bytes of an entry")
     {
-        for (size_t i = 0; i < cso2::NUM_PROVIDERS; i++)
+        for (std::size_t i = 0; i < cso2::NUM_PROVIDERS; i++)
         {
             auto [bWasRead, vFileBuffer] =
                 ReadFileToBuffer(cso2::PkgFilenames[i]);
@@ -78,7 +78,7 @@ TEST_CASE("Pkg file partially decrypting an entry", "[pkgfile]")
                 REQUIRE(pPkgFile->GetEntries().size() ==
                         cso2::PackageFileCounts[i]);
 
-                constexpr const uint64_t iTargetFileLen = 16;
+                constexpr const std::uint64_t iTargetFileLen = 16;
 
                 auto&& entry = pPkgFile->GetEntries().at(0);
                 auto [fileData, fileDataLen] =
@@ -95,7 +95,7 @@ TEST_CASE("Pkg file partially decrypting an entry", "[pkgfile]")
     }
     SECTION("Can decrypt 23 bytes of an entry")
     {
-        for (size_t i = 0; i < cso2::NUM_PROVIDERS; i++)
+        for (std::size_t i = 0; i < cso2::NUM_PROVIDERS; i++)
         {
             auto [bWasRead, vFileBuffer] =
                 ReadFileToBuffer(cso2::PkgFilenames[i]);
@@ -115,8 +115,8 @@ TEST_CASE("Pkg file partially decrypting an entry", "[pkgfile]")
                 REQUIRE(pPkgFile->GetEntries().size() ==
                         cso2::PackageFileCounts[i]);
 
-                constexpr const uint64_t iTargetFileLen = 23;
-                constexpr const uint64_t iExpectedFileLen = 32;
+                constexpr const std::uint64_t iTargetFileLen = 23;
+                constexpr const std::uint64_t iExpectedFileLen = 32;
 
                 auto&& entry = pPkgFile->GetEntries().at(0);
                 auto [fileData, fileDataLen] =
@@ -137,7 +137,7 @@ TEST_CASE("Pkg file can be decrypted and parsed using C bindings", "[pkgfile]")
 {
     SECTION("Can parse entries")
     {
-        for (size_t i = 0; i < cso2::NUM_PROVIDERS; i++)
+        for (std::size_t i = 0; i < cso2::NUM_PROVIDERS; i++)
         {
             auto [bWasRead, vFileBuffer] =
                 ReadFileToBuffer(cso2::PkgFilenames[i]);
@@ -157,20 +157,20 @@ TEST_CASE("Pkg file can be decrypted and parsed using C bindings", "[pkgfile]")
             bool bParsed = uncso2_PkgFile_Parse(pPkg);
             REQUIRE(bParsed == true);
 
-            uint64_t iEntriesNum = uncso2_PkgFile_GetEntriesNum(pPkg);
+            std::uint64_t iEntriesNum = uncso2_PkgFile_GetEntriesNum(pPkg);
             PkgEntry_t* pEntries = uncso2_PkgFile_GetEntries(pPkg);
 
             REQUIRE(iEntriesNum == cso2::PackageFileCounts[i]);
 
-            for (size_t y = 0; y < iEntriesNum; y++)
+            for (std::size_t y = 0; y < iEntriesNum; y++)
             {
                 void* pOutBuffer;
-                uint64_t iOutBufferSize;
+                std::uint64_t iOutBufferSize;
                 bool bValidEntry = uncso2_PkgEntry_Decrypt(
                     pEntries[y], &pOutBuffer, &iOutBufferSize);
 
                 REQUIRE(bValidEntry == true);
-                REQUIRE(GetDataHash(reinterpret_cast<uint8_t*>(pOutBuffer),
+                REQUIRE(GetDataHash(reinterpret_cast<std::uint8_t*>(pOutBuffer),
                                     iOutBufferSize) ==
                         cso2::PackageFilesHashes[i][y]);
             }

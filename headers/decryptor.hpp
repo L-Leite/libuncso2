@@ -25,19 +25,20 @@ public:
     CDecryptor(IBaseCipher* cipher, std::string_view key, bool paddingEnabled);
     CDecryptor(IBaseCipher* cipher, std::string_view key,
                std::string_view iv = {}, bool paddingEnabled = true);
-    CDecryptor(IBaseCipher* cipher, const std::vector<uint8_t>& key,
-               const std::vector<uint8_t>& iv = {}, bool paddingEnabled = true);
+    CDecryptor(IBaseCipher* cipher, const std::vector<std::uint8_t>& key,
+               const std::vector<std::uint8_t>& iv = {},
+               bool paddingEnabled = true);
     ~CDecryptor() = default;
 
-    std::vector<uint8_t> Decrypt(std::vector<uint8_t>& data) const;
+    std::vector<std::uint8_t> Decrypt(std::vector<std::uint8_t>& data) const;
 
-    std::vector<uint8_t> Decrypt(const void* pStart,
-                                 const size_t iLength) const;
+    std::vector<std::uint8_t> Decrypt(const void* pStart,
+                                      const std::size_t iLength) const;
 
-    size_t Decrypt(const void* pStart, void* pOutBuffer,
-                   const size_t iLength) const;
+    std::size_t Decrypt(const void* pStart, void* pOutBuffer,
+                        const std::size_t iLength) const;
 
-    size_t DecryptInBuffer(void* pBuffer, const size_t iLength) const;
+    std::size_t DecryptInBuffer(void* pBuffer, const std::size_t iLength) const;
 
 private:
     void Initialize(std::string_view key, std::string_view iv,

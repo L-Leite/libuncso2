@@ -45,7 +45,8 @@ public:
      *
      * @param keyCollection A reference to a list of keys to decrypt the pkg.
      */
-    virtual void SetKeyCollection(const uint8_t (*keyCollection)[4][16]) = 0;
+    virtual void SetKeyCollection(
+        const std::uint8_t (*keyCollection)[4][16]) = 0;
 
     /**
      * @brief Checks if the index's header is valid.
@@ -75,7 +76,7 @@ public:
      *
      * @returns the buffer's decrypted size
      */
-    virtual uint64_t Parse() = 0;
+    virtual std::uint64_t Parse() = 0;
 
     /**
      * @brief Gets the index's file names
@@ -99,7 +100,7 @@ public:
      * @return ptr_t the new PkgIndex object
      */
     static ptr_t Create(std::string_view indexFilename,
-                        std::vector<uint8_t>& fileData,
-                        const uint8_t (*keyCollection)[4][16] = nullptr);
+                        std::vector<std::uint8_t>& fileData,
+                        const std::uint8_t (*keyCollection)[4][16] = nullptr);
 };
 }  // namespace uc2

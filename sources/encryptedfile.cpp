@@ -9,7 +9,7 @@
 
 namespace uc2
 {
-constexpr const uint16_t ENCRYPTED_FILE_VERSION = 2;
+constexpr const std::uint16_t ENCRYPTED_FILE_VERSION = 2;
 
 EncryptedFile::ptr_t EncryptedFile::Create(
     std::string_view fileName, std::vector<std::uint8_t>& fileData,
@@ -24,7 +24,7 @@ EncryptedFile::ptr_t EncryptedFile::Create(
     const std::uint64_t iDataSize, const std::uint8_t (&keyCollection)[4][16])
 {
     return EncryptedFileImpl::CreateSpan(
-        fileName, gsl::span<uint8_t>(pData, iDataSize), keyCollection);
+        fileName, gsl::span<std::uint8_t>(pData, iDataSize), keyCollection);
 }
 
 EncryptedFile::ptr_t EncryptedFileImpl::CreateSpan(
@@ -38,7 +38,7 @@ EncryptedFile::ptr_t EncryptedFileImpl::CreateSpan(
 bool EncryptedFile::IsEncryptedFile(std::uint8_t* pData,
                                     const std::uint64_t iDataSize)
 {
-    gsl::span<uint8_t> dataView(pData, iDataSize);
+    gsl::span<std::uint8_t> dataView(pData, iDataSize);
 
     if (iDataSize < sizeof(EncryptedFileHeader_t))
     {
@@ -55,7 +55,7 @@ bool EncryptedFile::IsEncryptedFile(std::uint8_t* pData,
 
     // Don't validate the data's size, since the user may only provide the
     // header's data only
-    /*const uint32_t iPredictedSize =
+    /*const std::uint32_t iPredictedSize =
         sizeof(EncryptedFileHeader_t) + pHeader->fileSize;
 
     if (iPredictedSize > iDataSize)
@@ -66,7 +66,7 @@ bool EncryptedFile::IsEncryptedFile(std::uint8_t* pData,
     return true;
 }
 
-uint64_t EncryptedFile::GetHeaderSize()
+std::uint64_t EncryptedFile::GetHeaderSize()
 {
     return sizeof(EncryptedFileHeader_t);
 }
@@ -99,7 +99,7 @@ EncryptedFileImpl::~EncryptedFileImpl() {}
 
 bool EncryptedFileImpl::IsHeaderValid() const
 {
-    const uint64_t iFileDataSize = this->m_FileDataView.size_bytes();
+    const std::uint64_t iFileDataSize = this->m_FileDataView.size_bytes();
 
     if (iFileDataSize < sizeof(EncryptedFileHeader_t))
     {

@@ -9,9 +9,10 @@
 
 namespace uc2
 {
-constexpr const uint16_t SUPPORTED_PKG_VERSION = 2;
+constexpr const std::uint16_t SUPPORTED_PKG_VERSION = 2;
 
-std::vector<std::string_view> SplitTextFileByLine(gsl::span<uint8_t> fileBuffer)
+std::vector<std::string_view> SplitTextFileByLine(
+    gsl::span<std::uint8_t> fileBuffer)
 {
     constexpr std::string_view szNewLine("\r\n", 2);
 
@@ -19,8 +20,8 @@ std::vector<std::string_view> SplitTextFileByLine(gsl::span<uint8_t> fileBuffer)
 
     std::string_view szPkgBuffer(
         reinterpret_cast<const char*>(fileBuffer.data()), fileBuffer.size());
-    uint64_t iCurrentPos = 0;
-    uint64_t iLineEndPos = 0;
+    std::uint64_t iCurrentPos = 0;
+    std::uint64_t iLineEndPos = 0;
 
     while ((iLineEndPos = szPkgBuffer.find(szNewLine, iCurrentPos)) !=
            std::string::npos)
@@ -37,24 +38,24 @@ std::vector<std::string_view> SplitTextFileByLine(gsl::span<uint8_t> fileBuffer)
 }
 
 PkgIndex::ptr_t PkgIndex::Create(
-    std::string_view indexFilename, std::vector<uint8_t>& fileData,
-    const uint8_t (*keyCollection)[4][16] /* = nullptr */)
+    std::string_view indexFilename, std::vector<std::uint8_t>& fileData,
+    const std::uint8_t (*keyCollection)[4][16] /* = nullptr */)
 {
     return std::make_unique<PkgIndexImpl>(indexFilename, fileData,
                                           keyCollection);
 }
 
 PkgIndex::ptr_t PkgIndexImpl::CreateSpan(
-    std::string_view indexFilename, gsl::span<uint8_t> fileDataView,
-    gsl::span<const uint8_t[4][16]> keyCollectionView)
+    std::string_view indexFilename, gsl::span<std::uint8_t> fileDataView,
+    gsl::span<const std::uint8_t[4][16]> keyCollectionView)
 {
     return std::make_unique<PkgIndexImpl>(indexFilename, fileDataView,
                                           keyCollectionView);
 }
 
 PkgIndexImpl::PkgIndexImpl(std::string_view indexFilename,
-                           std::vector<uint8_t>& fileData,
-                           const uint8_t (*keyCollection)[4][16])
+                           std::vector<std::uint8_t>& fileData,
+                           const std::uint8_t (*keyCollection)[4][16])
     : m_szvIndexFilename(indexFilename), m_FileDataView(fileData),
       m_bHeaderValidated(false)
 {
@@ -64,9 +65,9 @@ PkgIndexImpl::PkgIndexImpl(std::string_view indexFilename,
     }
 }
 
-PkgIndexImpl::PkgIndexImpl(std::string_view indexFilename,
-                           gsl::span<uint8_t> fileDataView,
-                           gsl::span<const uint8_t[4][16]> keyCollectionView)
+PkgIndexImpl::PkgIndexImpl(
+    std::string_view indexFilename, gsl::span<std::uint8_t> fileDataView,
+    gsl::span<const std::uint8_t[4][16]> keyCollectionView)
     : m_szvIndexFilename(indexFilename), m_FileDataView(fileDataView),
       m_KeyCollectionView(keyCollectionView), m_bHeaderValidated(false)
 {
@@ -74,20 +75,20 @@ PkgIndexImpl::PkgIndexImpl(std::string_view indexFilename,
 
 PkgIndexImpl::~PkgIndexImpl() {}
 
-void PkgIndexImpl::SetKeyCollection(const uint8_t (*keyCollection)[4][16])
+void PkgIndexImpl::SetKeyCollection(const std::uint8_t (*keyCollection)[4][16])
 {
     this->m_KeyCollectionView = { keyCollection, 16 * 4 };
 }
 
 void PkgIndexImpl::SetKeyCollectionSpan(
-    gsl::span<const uint8_t[4][16]> keyCollectionView)
+    gsl::span<const std::uint8_t[4][16]> keyCollectionView)
 {
     this->m_KeyCollectionView = keyCollectionView;
 }
 
 void PkgIndexImpl::ValidateHeader()
 {
-    const uint64_t iFileDataSize = this->m_FileDataView.size_bytes();
+    const std::uint64_t iFileDataSize = this->m_FileDataView.size_bytes();
 
     if (iFileDataSize < sizeof(PkgIndexHeader_t))
     {
@@ -113,7 +114,7 @@ void PkgIndexImpl::ValidateHeader()
     this->m_bHeaderValidated = true;
 }
 
-uint64_t PkgIndexImpl::Parse()
+std::uint64_t PkgIndexImpl::Parse()
 {
     if (this->m_bHeaderValidated == false)
     {
@@ -123,16 +124,16 @@ uint64_t PkgIndexImpl::Parse()
     auto pHeader =
         AddOffsetToBase<PkgIndexHeader_t>(this->m_FileDataView.data());
 
-    std::vector<uint8_t> digestedKey = GeneratePkgIndexKey(
+    std::vector<std::uint8_t> digestedKey = GeneratePkgIndexKey(
         pHeader->iKey, this->m_szvIndexFilename, this->m_KeyCollectionView);
 
-    auto pDataStart = AddOffsetToBase<uint8_t>(this->m_FileDataView.data(),
-                                               sizeof(PkgIndexHeader_t));
+    auto pDataStart = AddOffsetToBase<std::uint8_t>(this->m_FileDataView.data(),
+                                                    sizeof(PkgIndexHeader_t));
 
     auto pCipher = CreateIndexCipher(pHeader->iCipher);
     CDecryptor decryptor(pCipher.get(), digestedKey);
 
-    uint64_t iNewDataSize =
+    std::uint64_t iNewDataSize =
         decryptor.DecryptInBuffer(pDataStart, pHeader->iFileSize);
 
     this->m_vFilenames =
@@ -144,7 +145,7 @@ uint64_t PkgIndexImpl::Parse()
         throw std::runtime_error("Failed to decrypt the index file.");
     }
 
-    const uint64_t iNewSize = sizeof(PkgIndexHeader_t) + iNewDataSize;
+    const std::uint64_t iNewSize = sizeof(PkgIndexHeader_t) + iNewDataSize;
     return iNewSize;
 }
 

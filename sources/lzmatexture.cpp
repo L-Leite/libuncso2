@@ -98,11 +98,11 @@ bool LzmaTextureImpl::Decompress(std::uint8_t* outBuffer,
 bool LzmaTexture::IsLzmaTexture(std::uint8_t* pData,
                                 const std::uint64_t iDataSize)
 {
-    gsl::span<uint8_t> dataView(pData, iDataSize);
+    gsl::span<std::uint8_t> dataView(pData, iDataSize);
     return LzmaTextureImpl::IsLzmaTextureSpan(dataView);
 }
 
-uint64_t LzmaTexture::GetHeaderSize()
+std::uint64_t LzmaTexture::GetHeaderSize()
 {
     return sizeof(LzmaVtfHeader_t);
 }

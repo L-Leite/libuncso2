@@ -12,10 +12,10 @@ namespace uc2
 class PkgFileImpl : public PkgFile
 {
 public:
-    PkgFileImpl(std::string szFilename, std::vector<uint8_t>& fileData,
+    PkgFileImpl(std::string szFilename, std::vector<std::uint8_t>& fileData,
                 std::string szEntryKey = {}, std::string szDataKey = {},
                 PkgFileOptions* options = nullptr);
-    PkgFileImpl(std::string szFilename, gsl::span<uint8_t> fileDataView,
+    PkgFileImpl(std::string szFilename, gsl::span<std::uint8_t> fileDataView,
                 std::string szEntryKey = {}, std::string szDataKey = {},
                 PkgFileOptions* pOptions = nullptr);
     virtual ~PkgFileImpl() override;
@@ -26,11 +26,11 @@ public:
     virtual void SetDataKey(std::string szNewDataKey) override;
     virtual void SetTfoPkg(bool bNewState) override;
 
-    virtual void SetDataBuffer(std::vector<uint8_t>& newFileData) override;
-    void SetDataBufferSpan(gsl::span<uint8_t> newDataBuffer);
+    virtual void SetDataBuffer(std::vector<std::uint8_t>& newFileData) override;
+    void SetDataBufferSpan(gsl::span<std::uint8_t> newDataBuffer);
     virtual void ReleaseDataBuffer() override;
 
-    virtual uint64_t GetFullHeaderSize() override;
+    virtual std::uint64_t GetFullHeaderSize() override;
 
     virtual std::string_view GetMd5Hash() override;
 
@@ -40,13 +40,13 @@ public:
     virtual std::vector<entryptr_t>& GetEntries() override;
 
     static ptr_t CreateSpan(std::string szFilename,
-                            gsl::span<uint8_t> fileDataView = {},
+                            gsl::span<std::uint8_t> fileDataView = {},
                             std::string szEntryKey = {},
                             std::string szDataKey = {},
                             PkgFileOptions* pOptions = nullptr);
 
     template <typename PkgHeaderType>
-    uint64_t GetFullHeaderSizeInternal() const;
+    std::uint64_t GetFullHeaderSizeInternal() const;
 
 private:
     void Initialize(std::string szEntryKey, PkgFileOptions* pOptions);
@@ -78,7 +78,7 @@ private:
 
     std::string m_szMd5Hash;
 
-    gsl::span<uint8_t> m_FileDataView;
+    gsl::span<std::uint8_t> m_FileDataView;
 
     std::vector<std::unique_ptr<PkgEntry>> m_Entries;
 

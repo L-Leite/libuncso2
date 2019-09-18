@@ -16,7 +16,7 @@ TEST_CASE("Pkg index file can be decrypted and parsed", "[pkgindex]")
 {
     SECTION("Can parse pkg index")
     {
-        for (size_t i = 0; i < cso2::NUM_PROVIDERS; i++)
+        for (std::size_t i = 0; i < cso2::NUM_PROVIDERS; i++)
         {
             auto [bWasRead, vIndexBuffer] =
                 ReadFileToBuffer(cso2::IndexFilenames[i]);
@@ -31,7 +31,7 @@ TEST_CASE("Pkg index file can be decrypted and parsed", "[pkgindex]")
                     &cso2::IndexKeyCollections[i]);
 
                 pPkgIndex->ValidateHeader();
-                uint64_t iNewSize = pPkgIndex->Parse();
+                std::uint64_t iNewSize = pPkgIndex->Parse();
 
                 vIndexBuffer.resize(iNewSize);
 
@@ -52,7 +52,7 @@ TEST_CASE("Pkg index file can be decrypted and parsed with C bindings",
 {
     SECTION("Can parse pkg index")
     {
-        for (size_t i = 0; i < cso2::NUM_PROVIDERS; i++)
+        for (std::size_t i = 0; i < cso2::NUM_PROVIDERS; i++)
         {
             auto [bWasRead, vIndexBuffer] =
                 ReadFileToBuffer(cso2::IndexFilenames[i]);
@@ -71,7 +71,7 @@ TEST_CASE("Pkg index file can be decrypted and parsed with C bindings",
             bool bParsed = uncso2_PkgIndex_Parse(pIndex);
             REQUIRE(bParsed == true);
 
-            uint64_t iFilenamesNum = uncso2_PkgIndex_GetFilenamesNum(pIndex);
+            std::uint64_t iFilenamesNum = uncso2_PkgIndex_GetFilenamesNum(pIndex);
             REQUIRE(iFilenamesNum == cso2::IndexFileCounts[i]);
 
             uncso2_PkgIndex_Free(pIndex);

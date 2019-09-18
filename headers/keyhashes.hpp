@@ -6,9 +6,9 @@
 
 namespace uc2
 {
-std::vector<uint8_t> GeneratePkgIndexKey(
+std::vector<std::uint8_t> GeneratePkgIndexKey(
     int iKey, std::string_view szPkgName,
-    gsl::span<const uint8_t[4][16]> keyCollectionView);
+    gsl::span<const std::uint8_t[4][16]> keyCollectionView);
 
 std::string GeneratePkgFileKey(std::string_view szvPkgName,
                                std::string_view szKey);

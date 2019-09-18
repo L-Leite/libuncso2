@@ -77,9 +77,9 @@ public:
     /**
      * @brief Gets the size of a compressed texture's header.
      *
-     * @return uint64_t The size of a compressed texture's header.
+     * @return std::uint64_t The size of a compressed texture's header.
      */
-    static uint64_t GetHeaderSize();
+    static std::uint64_t GetHeaderSize();
 
     /**
      * @brief Construct a new CompressedTexture object.

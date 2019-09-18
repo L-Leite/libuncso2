@@ -30,12 +30,14 @@ constexpr inline NoConstNumType RoundNumberToBlock(const NumType num)
 
 namespace uc2
 {
-constexpr const size_t PKG_ENTRY_KEY_LEN = 16;
-constexpr const uint64_t PKG_DATA_BLOCK_SIZE = 0x10000;
+constexpr const std::size_t PKG_ENTRY_KEY_LEN = 16;
+constexpr const std::uint64_t PKG_DATA_BLOCK_SIZE = 0x10000;
 
-PkgEntryImpl::PkgEntryImpl(std::string_view szFilePath, uint64_t pkgFileOffset,
-                           uint64_t encryptedSize, uint64_t decryptedSize,
-                           bool isEncrypted, gsl::span<uint8_t> fileDataView,
+PkgEntryImpl::PkgEntryImpl(std::string_view szFilePath,
+                           std::uint64_t pkgFileOffset,
+                           std::uint64_t encryptedSize,
+                           std::uint64_t decryptedSize, bool isEncrypted,
+                           gsl::span<std::uint8_t> fileDataView,
                            std::string_view szvPkgKey /*= {}*/)
     : m_FileDataView(fileDataView), m_szFilePath(MakeUnixSeparated(szFilePath)),
       m_iPkgFileOffset(pkgFileOffset), m_iEncryptedSize(encryptedSize),
@@ -59,8 +61,8 @@ PkgEntryImpl::PkgEntryImpl(std::string_view szFilePath, uint64_t pkgFileOffset,
 
 PkgEntryImpl::~PkgEntryImpl() {}
 
-std::pair<uint8_t*, uint64_t> PkgEntryImpl::DecryptFile(
-    const uint64_t iBytesToDecrypt /*= 0 */)
+std::pair<std::uint8_t*, std::uint64_t> PkgEntryImpl::DecryptFile(
+    const std::uint64_t iBytesToDecrypt /*= 0 */)
 {
     if (this->m_FileDataView.empty() == true)
     {
@@ -69,14 +71,14 @@ std::pair<uint8_t*, uint64_t> PkgEntryImpl::DecryptFile(
     }
 
     const bool bDecryptAll = iBytesToDecrypt == 0;
-    const uint64_t iAlignedBytes =
+    const std::uint64_t iAlignedBytes =
         bDecryptAll == true ? 0 : RoundNumberToBlock(iBytesToDecrypt);
-    const uint64_t iRequiredDataSize =
+    const std::uint64_t iRequiredDataSize =
         bDecryptAll == true ? this->m_iEncryptedSize : iAlignedBytes;
 
-    const uint64_t iRequiredFileSize =
+    const std::uint64_t iRequiredFileSize =
         this->m_iPkgFileOffset + iRequiredDataSize;
-    const uint64_t iFileDataSize = this->m_FileDataView.size_bytes();
+    const std::uint64_t iFileDataSize = this->m_FileDataView.size_bytes();
 
     if (iRequiredFileSize > iFileDataSize)
     {
@@ -99,17 +101,17 @@ const std::string_view PkgEntryImpl::GetFilePath()
     return this->m_szFilePath;
 }
 
-uint64_t PkgEntryImpl::GetPkgFileOffset()
+std::uint64_t PkgEntryImpl::GetPkgFileOffset()
 {
     return this->m_iPkgFileOffset;
 }
 
-uint64_t PkgEntryImpl::GetEncryptedSize()
+std::uint64_t PkgEntryImpl::GetEncryptedSize()
 {
     return this->m_iEncryptedSize;
 }
 
-uint64_t PkgEntryImpl::GetDecryptedSize()
+std::uint64_t PkgEntryImpl::GetDecryptedSize()
 {
     return this->m_iDecryptedSize;
 }
@@ -119,37 +121,38 @@ bool PkgEntryImpl::IsEncrypted()
     return this->m_bIsEncrypted;
 }
 
-std::pair<uint8_t*, uint64_t> PkgEntryImpl::HandleEncryptedFile(
-    const uint64_t iBytesToDecrypt) const
+std::pair<std::uint8_t*, std::uint64_t> PkgEntryImpl::HandleEncryptedFile(
+    const std::uint64_t iBytesToDecrypt) const
 {
     if (this->m_iEncryptedSize == 0)
     {
         return { nullptr, 0 };
     }
 
-    uint64_t dwBlockStart =
-        reinterpret_cast<uint64_t>(this->m_FileDataView.data()) +
+    std::uint64_t dwBlockStart =
+        reinterpret_cast<std::uint64_t>(this->m_FileDataView.data()) +
         this->m_iPkgFileOffset;
-    uint8_t* pFileStart = reinterpret_cast<uint8_t*>(dwBlockStart);
+    std::uint8_t* pFileStart = reinterpret_cast<std::uint8_t*>(dwBlockStart);
 
     CAesCipher cipher;
     CDecryptor decryptor(&cipher, this->m_szHashedKey, false);
 
     bool bDecryptAll = iBytesToDecrypt == 0;
 
-    const uint64_t iTargetEncDataSize =
+    const std::uint64_t iTargetEncDataSize =
         bDecryptAll == true ? this->m_iEncryptedSize : iBytesToDecrypt;
-    const uint64_t iTargetDecDataSize =
+    const std::uint64_t iTargetDecDataSize =
         bDecryptAll == true ? this->m_iDecryptedSize : iBytesToDecrypt;
 
     // The data must be decrypted each PKG_DATA_BLOCK_SIZE (which at the
     // time of writing this is 65536), or else only the first 65536
     // bytes will be correct
-    for (uint64_t curOff = 0; curOff < iTargetEncDataSize;
+    for (std::uint64_t curOff = 0; curOff < iTargetEncDataSize;
          curOff += PKG_DATA_BLOCK_SIZE)
     {
-        uint8_t* pBlock = reinterpret_cast<uint8_t*>(dwBlockStart + curOff);
-        const uint64_t iCurBlockSize =
+        std::uint8_t* pBlock =
+            reinterpret_cast<std::uint8_t*>(dwBlockStart + curOff);
+        const std::uint64_t iCurBlockSize =
             std::min(iTargetEncDataSize - curOff, PKG_DATA_BLOCK_SIZE);
 
         decryptor.DecryptInBuffer(pBlock, iCurBlockSize);
@@ -158,28 +161,28 @@ std::pair<uint8_t*, uint64_t> PkgEntryImpl::HandleEncryptedFile(
     return { pFileStart, iTargetDecDataSize };
 }
 
-std::pair<uint8_t*, uint64_t> PkgEntryImpl::HandlePlainFile(
-    const uint64_t iBytesToDecrypt) const noexcept
+std::pair<std::uint8_t*, std::uint64_t> PkgEntryImpl::HandlePlainFile(
+    const std::uint64_t iBytesToDecrypt) const noexcept
 {
     bool bDecryptAll = iBytesToDecrypt == 0;
 
-    const uint64_t iTargetDecDataSize =
+    const std::uint64_t iTargetDecDataSize =
         bDecryptAll == true ? this->m_iDecryptedSize : iBytesToDecrypt;
 
-    uint64_t dwBlockStart =
-        reinterpret_cast<uint64_t>(this->m_FileDataView.data()) +
+    std::uint64_t dwBlockStart =
+        reinterpret_cast<std::uint64_t>(this->m_FileDataView.data()) +
         this->m_iPkgFileOffset;
-    uint8_t* pFileStart = reinterpret_cast<uint8_t*>(dwBlockStart);
+    std::uint8_t* pFileStart = reinterpret_cast<std::uint8_t*>(dwBlockStart);
     return { pFileStart, iTargetDecDataSize };
 }
 
-void PkgEntryImpl::SetDataBufferView(gsl::span<uint8_t> newDataView)
+void PkgEntryImpl::SetDataBufferView(gsl::span<std::uint8_t> newDataView)
 {
     this->m_FileDataView = newDataView;
 }
 
 void PkgEntryImpl::ReleaseDataBufferView()
 {
-    this->m_FileDataView = gsl::span<uint8_t>();
+    this->m_FileDataView = gsl::span<std::uint8_t>();
 }
 }  // namespace uc2

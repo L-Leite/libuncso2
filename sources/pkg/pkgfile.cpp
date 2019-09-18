@@ -10,11 +10,11 @@
 
 namespace uc2
 {
-constexpr const size_t PKG_HASHED_ENTRY_KEY_LEN = 16;
-constexpr const uint64_t PKG_HEADER_SKIP_HASH_OFFSET = 33;
+constexpr const std::size_t PKG_HASHED_ENTRY_KEY_LEN = 16;
+constexpr const std::uint64_t PKG_HEADER_SKIP_HASH_OFFSET = 33;
 
 PkgFile::ptr_t PkgFile::Create(std::string szFilename,
-                               std::vector<uint8_t>& fileData,
+                               std::vector<std::uint8_t>& fileData,
                                std::string szEntryKey /*= {}*/,
                                std::string szDataKey /*= {}*/,
                                PkgFileOptions* options /*= nullptr*/)
@@ -23,7 +23,7 @@ PkgFile::ptr_t PkgFile::Create(std::string szFilename,
                                          szDataKey, options);
 }
 
-uint64_t PkgFile::GetHeaderSize(bool bTfoPkg)
+std::uint64_t PkgFile::GetHeaderSize(bool bTfoPkg)
 {
     if (bTfoPkg == true)
     {
@@ -36,7 +36,7 @@ uint64_t PkgFile::GetHeaderSize(bool bTfoPkg)
 }
 
 PkgFile::ptr_t PkgFileImpl::CreateSpan(std::string szFilename,
-                                       gsl::span<uint8_t> fileData,
+                                       gsl::span<std::uint8_t> fileData,
                                        std::string szEntryKey /*= {}*/,
                                        std::string szDataKey /*= {}*/,
                                        PkgFileOptions* pOptions /* = nullptr*/)
@@ -45,7 +45,8 @@ PkgFile::ptr_t PkgFileImpl::CreateSpan(std::string szFilename,
                                          szDataKey, pOptions);
 }
 
-PkgFileImpl::PkgFileImpl(std::string szFilename, std::vector<uint8_t>& fileData,
+PkgFileImpl::PkgFileImpl(std::string szFilename,
+                         std::vector<std::uint8_t>& fileData,
                          std::string szEntryKey /*= {}*/,
                          std::string szDataKey /*= {}*/,
                          PkgFileOptions* options /* = nullptr*/)
@@ -56,7 +57,8 @@ PkgFileImpl::PkgFileImpl(std::string szFilename, std::vector<uint8_t>& fileData,
     this->Initialize(szEntryKey, options);
 }
 
-PkgFileImpl::PkgFileImpl(std::string szFilename, gsl::span<uint8_t> fileData,
+PkgFileImpl::PkgFileImpl(std::string szFilename,
+                         gsl::span<std::uint8_t> fileData,
                          std::string szEntryKey /*= {}*/,
                          std::string szDataKey /*= {}*/,
                          PkgFileOptions* pOptions /* = nullptr*/)
@@ -93,7 +95,7 @@ void PkgFileImpl::ValidateInit() const
             "libuncso2: The file name argument cannot be empty");
     }
 
-    const uint64_t iFileDataSize = this->m_FileDataView.size_bytes();
+    const std::uint64_t iFileDataSize = this->m_FileDataView.size_bytes();
 
     if (iFileDataSize < sizeof(PkgHeaderType))
     {
@@ -143,13 +145,13 @@ void PkgFileImpl::SetTfoPkg(bool bNewState)
     this->m_bIsTfoPkg = bNewState;
 }
 
-void PkgFileImpl::SetDataBuffer(std::vector<uint8_t>& newFileData)
+void PkgFileImpl::SetDataBuffer(std::vector<std::uint8_t>& newFileData)
 {
     this->m_FileDataView = newFileData;
     this->UpdateEntriesDataView();
 }
 
-void PkgFileImpl::SetDataBufferSpan(gsl::span<uint8_t> newDataBuffer)
+void PkgFileImpl::SetDataBufferSpan(gsl::span<std::uint8_t> newDataBuffer)
 {
     this->m_FileDataView = newDataBuffer;
     this->UpdateEntriesDataView();
@@ -160,7 +162,7 @@ void PkgFileImpl::ReleaseDataBuffer()
     this->m_FileDataView = {};
 }
 
-uint64_t PkgFileImpl::GetFullHeaderSize()
+std::uint64_t PkgFileImpl::GetFullHeaderSize()
 {
     if (this->m_bIsTfoPkg == true)
     {
@@ -178,7 +180,7 @@ std::string_view PkgFileImpl::GetMd5Hash()
 }
 
 template <typename PkgHeaderType>
-uint64_t PkgFileImpl::GetFullHeaderSizeInternal() const
+std::uint64_t PkgFileImpl::GetFullHeaderSizeInternal() const
 {
     if (this->IsHeaderDecryptedInternal<PkgHeaderType>() == false)
     {
@@ -285,14 +287,14 @@ void PkgFileImpl::ParseEntries()
     auto pPkgHeader = this->GetPkgHeader<PkgHeaderType>();
     auto pEntries = this->GetEntriesHeader<PkgHeaderType>();
 
-    const uint64_t iDataStartOffset =
+    const std::uint64_t iDataStartOffset =
         PKG_HEADER_SKIP_HASH_OFFSET + sizeof(PkgHeaderType) +
         pPkgHeader->iEntries * sizeof(PkgEntryHeader_t);
 
     CAesCipher cipher;
     CDecryptor decryptor(&cipher, this->m_szHashedEntryKey, false);
 
-    for (uint32_t i = 0; i < pPkgHeader->iEntries; i++)
+    for (std::uint32_t i = 0; i < pPkgHeader->iEntries; i++)
     {
         PkgEntryHeader_t* entry = &pEntries[i];
         decryptor.DecryptInBuffer(entry, sizeof(PkgEntryHeader_t));
@@ -318,7 +320,8 @@ void PkgFileImpl::UpdateEntriesDataView()
 template <typename PkgHeaderType>
 PkgHeaderType* PkgFileImpl::GetPkgHeader() const
 {
-    uint64_t data = reinterpret_cast<uint64_t>(this->m_FileDataView.data());
+    std::uint64_t data =
+        reinterpret_cast<std::uint64_t>(this->m_FileDataView.data());
     data += PKG_HEADER_SKIP_HASH_OFFSET;
     return reinterpret_cast<PkgHeaderType*>(data);
 }
@@ -326,7 +329,8 @@ PkgHeaderType* PkgFileImpl::GetPkgHeader() const
 template <typename PkgHeaderType>
 PkgEntryHeader_t* PkgFileImpl::GetEntriesHeader() const
 {
-    uint64_t data = reinterpret_cast<uint64_t>(this->m_FileDataView.data());
+    std::uint64_t data =
+        reinterpret_cast<std::uint64_t>(this->m_FileDataView.data());
     data += PKG_HEADER_SKIP_HASH_OFFSET + sizeof(PkgHeaderType);
     return reinterpret_cast<PkgEntryHeader_t*>(data);
 }

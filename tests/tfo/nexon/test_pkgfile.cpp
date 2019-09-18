@@ -34,7 +34,7 @@ TEST_CASE("TFO Pkg file can be decrypted and parsed", "[pkgfile]")
 
             REQUIRE(pPkgFile->GetEntries().size() == tfo::PackageFileCount);
 
-            size_t iCurIndex = 0;
+            std::size_t iCurIndex = 0;
             for (auto&& entry : pPkgFile->GetEntries())
             {
                 fs::path entryPath = entry->GetFilePath();
@@ -76,7 +76,7 @@ TEST_CASE("TFO Pkg file partially decrypting an entry", "[pkgfile]")
 
             REQUIRE(pPkgFile->GetEntries().size() == tfo::PackageFileCount);
 
-            constexpr const uint64_t iTargetFileLen = 16;
+            constexpr const std::uint64_t iTargetFileLen = 16;
 
             auto&& entry = pPkgFile->GetEntries().at(0);
             auto [fileData, fileDataLen] = entry->DecryptFile(iTargetFileLen);
@@ -110,8 +110,8 @@ TEST_CASE("TFO Pkg file partially decrypting an entry", "[pkgfile]")
 
             REQUIRE(pPkgFile->GetEntries().size() == tfo::PackageFileCount);
 
-            constexpr const uint64_t iTargetFileLen = 23;
-            constexpr const uint64_t iExpectedFileLen = 32;
+            constexpr const std::uint64_t iTargetFileLen = 23;
+            constexpr const std::uint64_t iExpectedFileLen = 32;
 
             auto&& entry = pPkgFile->GetEntries().at(0);
             auto [fileData, fileDataLen] = entry->DecryptFile(iTargetFileLen);
@@ -154,20 +154,20 @@ TEST_CASE("TFO Pkg file can be decrypted and parsed using C bindings",
         bool bParsed = uncso2_PkgFile_Parse(pPkg);
         REQUIRE(bParsed == true);
 
-        uint64_t iEntriesNum = uncso2_PkgFile_GetEntriesNum(pPkg);
+        std::uint64_t iEntriesNum = uncso2_PkgFile_GetEntriesNum(pPkg);
         PkgEntry_t* pEntries = uncso2_PkgFile_GetEntries(pPkg);
 
         REQUIRE(iEntriesNum == tfo::PackageFileCount);
 
-        for (size_t y = 0; y < iEntriesNum; y++)
+        for (std::size_t y = 0; y < iEntriesNum; y++)
         {
             void* pOutBuffer;
-            uint64_t iOutBufferSize;
+            std::uint64_t iOutBufferSize;
             bool bValidEntry = uncso2_PkgEntry_Decrypt(pEntries[y], &pOutBuffer,
                                                        &iOutBufferSize);
 
             REQUIRE(bValidEntry == true);
-            REQUIRE(GetDataHash(reinterpret_cast<uint8_t*>(pOutBuffer),
+            REQUIRE(GetDataHash(reinterpret_cast<std::uint8_t*>(pOutBuffer),
                                 iOutBufferSize) == tfo::PackageFileHashes[y]);
         }
 

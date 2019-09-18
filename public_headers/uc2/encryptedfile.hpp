@@ -44,10 +44,10 @@ public:
      *
      * Decrypts the file through the same decryption method in PkgIndex.
      *
-     * @return std::pair<std::uint8_t*, size_t> A pair with the buffer pointer
-     * and the buffer's length.
+     * @return std::pair<std::uint8_t*, std::size_t> A pair with the buffer
+     * pointer and the buffer's length.
      */
-    virtual std::pair<std::uint8_t*, size_t> Decrypt() = 0;
+    virtual std::pair<std::uint8_t*, std::size_t> Decrypt() = 0;
 
     /**
      * @brief Does the buffer data's have an encrypted file header?
@@ -65,9 +65,9 @@ public:
     /**
      * @brief Gets the size of an encrypted file's header.
      *
-     * @return uint64_t The size of an encrypted file's header.
+     * @return std::uint64_t The size of an encrypted file's header.
      */
-    static uint64_t GetHeaderSize();
+    static std::uint64_t GetHeaderSize();
 
     /**
      * @brief Construct a new EncryptedFile object.
@@ -85,7 +85,7 @@ public:
      * @return ptr_t the new EncryptedFile object.
      */
     static ptr_t Create(std::string_view fileName,
-                        std::vector<uint8_t>& fileData,
+                        std::vector<std::uint8_t>& fileData,
                         const std::uint8_t (&keyCollection)[4][16]);
 
     /**

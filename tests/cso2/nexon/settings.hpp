@@ -15,7 +15,7 @@ enum class Provider
     NexonJP,
 };
 
-const uint64_t NUM_PROVIDERS = 4;
+const std::uint64_t NUM_PROVIDERS = 4;
 
 //
 // Index data START
@@ -34,14 +34,14 @@ const std::array<std::string, 4> IndexRealFilenames = {
     "1b87c6b551e518d11114ee21b7645a47.pkg"s   // NexonJP
 };
 
-constexpr const std::array<uint64_t, 4> IndexFileCounts = {
+constexpr const std::array<std::uint64_t, 4> IndexFileCounts = {
     2091,  // Nexon
     2087,  // Tiancity
     2045,  // Beancity
     1634   // NexonJP
 };
 
-constexpr const uint8_t IndexKeyCollections[5][4][16] = {
+constexpr const std::uint8_t IndexKeyCollections[5][4][16] = {
     {
         { 0x9A, 0xA6, 0xC7, 0x59, 0x18, 0xEA, 0xD0, 0x44, 0x83, 0xA3, 0x3A,
           0x3E, 0xCE, 0xAF, 0x6F, 0x68 },
@@ -121,7 +121,7 @@ const std::array<std::string, 4> PackageFileKeys = {
     "^9gErg2Sx7bnk7@#sdfjnh@"s,  // NexonJP
 };
 
-constexpr const std::array<uint64_t, 4> PackageFileCounts = {
+constexpr const std::array<std::uint64_t, 4> PackageFileCounts = {
     7,   // Nexon
     10,  // Tiancity
     12,  // Beancity

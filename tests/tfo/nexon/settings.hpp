@@ -14,9 +14,9 @@ const std::string IndexFilename = "index_tfo.pkg"s;
 
 const std::string IndexRealFilename = "1b87c6b551e518d11114ee21b7645a47.pkg"s;
 
-constexpr const uint64_t IndexFileCount = 1077;
+constexpr const std::uint64_t IndexFileCount = 1077;
 
-constexpr const uint8_t IndexKeyCollection[4][16] = {
+constexpr const std::uint8_t IndexKeyCollection[4][16] = {
     { 0x49, 0x17, 0x7A, 0x74, 0xA3, 0xE4, 0x26, 0x48, 0xBF, 0x07, 0x8F, 0x21,
       0xC4, 0x6C, 0x7A, 0xEE },
     { 0x98, 0xDF, 0x70, 0xE2, 0xFB, 0xAE, 0x88, 0x46, 0xA1, 0x7C, 0x99, 0xE3,
@@ -39,7 +39,7 @@ const std::string PackageEntryKey = "lkgui781kl789sd!@#%89&^sd"s;
 
 const std::string PackageFileKey = "^9gErg2Sx7bnk7@#sdfjnh@"s;
 
-constexpr const uint64_t PackageFileCount = 4;
+constexpr const std::uint64_t PackageFileCount = 4;
 
 const std::array<std::string, 4> PackageFileHashes = {
     "42d3b7b74b8feb7f6801930ba58aef6bb85fa2d8a465cffef36c906566cbeeb4",

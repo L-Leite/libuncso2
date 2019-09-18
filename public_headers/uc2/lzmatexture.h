@@ -63,8 +63,8 @@ extern "C"
      * @return true If the buffer data has an LZMA texture header.
      * @return false If the buffer data does NOT have an LZMA texture header.
      */
-    UNCSO2_API bool uncso2_LzmaTexture_IsLzmaTexture(void* pData,
-                                                     const uint64_t iDataSize);
+    UNCSO2_API bool uncso2_LzmaTexture_IsLzmaTexture(
+        void* pData, const uint64_t iDataSize);
 
     /**
      * @brief Gets the size of a compressed texture's header.

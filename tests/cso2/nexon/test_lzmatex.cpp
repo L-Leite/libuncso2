@@ -31,10 +31,10 @@ TEST_CASE("Can decompress LZMA'd VTFs", "[lzmavtf]")
         {
             auto pTex = uc2::LzmaTexture::Create(vTexBuffer);
 
-            uint64_t iOrigSize = pTex->GetOriginalSize();
+            std::uint64_t iOrigSize = pTex->GetOriginalSize();
             REQUIRE(iOrigSize != 0);
 
-            std::vector<uint8_t> buff(iOrigSize);
+            std::vector<std::uint8_t> buff(iOrigSize);
             bool bDecompressed = pTex->Decompress(buff.data(), buff.size());
 
             REQUIRE(bDecompressed == true);
@@ -67,7 +67,7 @@ TEST_CASE("Can decompress LZMA'd VTFs with C bindings", "[lzmavtf]")
             uncso2_LzmaTexture_Create(vTexBuffer.data(), vTexBuffer.size());
         REQUIRE(pTexture != NULL);
 
-        uint64_t iOrigSize = uncso2_LzmaTexture_GetOriginalSize(pTexture);
+        std::uint64_t iOrigSize = uncso2_LzmaTexture_GetOriginalSize(pTexture);
         REQUIRE(iOrigSize != 0);
 
         void* pOutBuf = malloc(iOrigSize);
@@ -77,7 +77,7 @@ TEST_CASE("Can decompress LZMA'd VTFs with C bindings", "[lzmavtf]")
             uncso2_LzmaTexture_Decompress(pTexture, pOutBuf, iOrigSize);
 
         REQUIRE(bWasDecompressed == true);
-        REQUIRE(GetDataHash(reinterpret_cast<uint8_t*>(pOutBuf), iOrigSize) ==
+        REQUIRE(GetDataHash(reinterpret_cast<std::uint8_t*>(pOutBuf), iOrigSize) ==
                 cso2::TextureFileHash);
 
         free(pOutBuf);

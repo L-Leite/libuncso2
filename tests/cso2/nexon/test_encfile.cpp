@@ -17,7 +17,7 @@ TEST_CASE("Can decrypt .e* files", "[encfile]")
 {
     SECTION("Decrypting .e* file")
     {
-        for (size_t i = 0; i < cso2::NUM_PROVIDERS; i++)
+        for (std::size_t i = 0; i < cso2::NUM_PROVIDERS; i++)
         {
             auto [bWasRead, vFileBuffer] =
                 ReadFileToBuffer(cso2::EncryptedFileNames[i]);
@@ -53,7 +53,7 @@ TEST_CASE("Can decrypt .e* files with C bindings", "[encfile]")
 {
     SECTION("Decrypting .e* file")
     {
-        for (size_t i = 0; i < cso2::NUM_PROVIDERS; i++)
+        for (std::size_t i = 0; i < cso2::NUM_PROVIDERS; i++)
         {
             auto [bWasRead, vFileBuffer] =
                 ReadFileToBuffer(cso2::EncryptedFileNames[i]);
@@ -71,8 +71,8 @@ TEST_CASE("Can decrypt .e* files with C bindings", "[encfile]")
                 vFileBuffer.size(), &cso2::IndexKeyCollections[i]);
             REQUIRE(pFile != NULL);
 
-            uint8_t* pOutBuf = nullptr;
-            uint64_t iBufSize = 0;
+            std::uint8_t* pOutBuf = nullptr;
+            std::uint64_t iBufSize = 0;
             bool bWasDecrypted = uncso2_EncryptedFile_Decrypt(
                 pFile, reinterpret_cast<void**>(&pOutBuf), &iBufSize);
 

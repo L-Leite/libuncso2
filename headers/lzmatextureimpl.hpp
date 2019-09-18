@@ -6,43 +6,39 @@
 
 namespace uc2
 {
-constexpr const uint8_t CSO2_LZMA_VTF_HWORD_SIGNATURE = 'C';      // C
-constexpr const uint16_t CSO2_LZMA_VTF_LWORD_SIGNATURE = 0x324F;  // 02
+constexpr const std::uint8_t CSO2_LZMA_VTF_HWORD_SIGNATURE = 'C';      // C
+constexpr const std::uint16_t CSO2_LZMA_VTF_LWORD_SIGNATURE = 0x324F;  // 02
 
 #pragma pack(push, 1)
-
 struct LzmaVtfHeader_t
 {
     struct
     {
-        uint8_t iHighByte;
-        uint16_t iLowWord;
+        std::uint8_t iHighByte;
+        std::uint16_t iLowWord;
     } Signature;
-    uint8_t iProbs;
-    uint32_t iOriginalSize;
-    uint32_t iChunkSizes[];  // TODO: can this flexible array be changed to
-                             // something else?
+    std::uint8_t iProbs;
+    std::uint32_t iOriginalSize;
+    std::uint32_t iChunkSizes[];  // TODO: can this flexible array be
+                                  // changed to something else?
 };
-
 #pragma pack(pop)
 
 class LzmaTextureImpl : public LzmaTexture
 {
 public:
-    LzmaTextureImpl(std::vector<uint8_t>& texData);
-    LzmaTextureImpl(gsl::span<uint8_t> texDataView);
+    LzmaTextureImpl(std::vector<std::uint8_t>& texData);
+    LzmaTextureImpl(gsl::span<std::uint8_t> texDataView);
     virtual ~LzmaTextureImpl();
 
-    virtual uint64_t GetOriginalSize();
+    virtual std::uint64_t GetOriginalSize() override;
 
-    virtual bool Decompress(uint8_t* outBuffer, uint64_t outBufferSize);
+    virtual bool Decompress(std::uint8_t* outBuffer,
+                            std::uint64_t outBufferSize) override;
 
-    static ptr_t CreateSpan(gsl::span<uint8_t> texDataView);
-
-private:
-    bool IsHeaderValid() const;
+    static bool IsLzmaTextureSpan(gsl::span<std::uint8_t> texData);
 
 private:
-    gsl::span<uint8_t> m_TexDataView;
+    gsl::span<std::uint8_t> m_TexDataView;
 };
 }  // namespace uc2
