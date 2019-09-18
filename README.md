@@ -40,7 +40,7 @@ const std::string_view NexonEntryKey = "lkgui781kl789sd!@#%89&^sd";
 const std::string_view NexonDataKey = "^9gErg2Sx7bnk7@#sdfjnh@";
 
 std::string szPkgFilename = "e8a0dcce7c40cf3549ee7e0093ae8041.pkg";
-std::vector<uint8_t> vPkgData; // Contains a PKG file's data
+std::vector<std::uint8_t> vPkgData; // Contains a PKG file's data
 
 try
 {
@@ -72,7 +72,7 @@ Decrypting and parsing a PKG index file and printing the number of entries:
 
 // Key collection to decrypt the index data
 // Shared between index files and encrypted files
-const uint8_t NexonIndexKeyCollection[4][16] = {
+const std::uint8_t NexonIndexKeyCollection[4][16] = {
     { 0x9A, 0xA6, 0xC7, 0x59, 0x18, 0xEA, 0xD0, 0x44, 0x83, 0xA3, 0x3A,
         0x3E, 0xCE, 0xAF, 0x6F, 0x68 },
     { 0xB6, 0xBA, 0x15, 0xC7, 0x77, 0x9D, 0x9C, 0x49, 0x84, 0x62, 0x2A,
@@ -84,14 +84,14 @@ const uint8_t NexonIndexKeyCollection[4][16] = {
 };
 
 std::string szIndexFilename = "1b87c6b551e518d11114ee21b7645a47.pkg";
-std::vector<uint8_t> vIndexData; // Contains the index's file data
+std::vector<std::uint8_t> vIndexData; // Contains the index's file data
 
 try
 {
     auto pPkgIndex = uc2::PkgIndex::Create(
         szIndexFilename, vIndexData, NexonIndexKeyCollection);
 
-    const uint64_t iNewSize = pPkgIndex->Parse();
+    const std::uint64_t iNewSize = pPkgIndex->Parse();
 
     vIndexData.resize(iNewSize);
 
@@ -113,7 +113,7 @@ Decrypt an 'e' file and write its contents to a new file:
 
 // Key collection to decrypt the index data
 // Shared between index files and encrypted files
-const uint8_t NexonIndexKeyCollection[4][16] = {
+const std::uint8_t NexonIndexKeyCollection[4][16] = {
     { 0x9A, 0xA6, 0xC7, 0x59, 0x18, 0xEA, 0xD0, 0x44, 0x83, 0xA3, 0x3A,
         0x3E, 0xCE, 0xAF, 0x6F, 0x68 },
     { 0xB6, 0xBA, 0x15, 0xC7, 0x77, 0x9D, 0x9C, 0x49, 0x84, 0x62, 0x2A,
@@ -125,7 +125,7 @@ const uint8_t NexonIndexKeyCollection[4][16] = {
 };
 
 std::string szFilename = "attachments_dev.ecsv";
-std::vector<uint8_t> vFileData; // Contains the index's file data
+std::vector<std::uint8_t> vFileData; // Contains the index's file data
 
 try
 {
@@ -150,20 +150,20 @@ Decompress an LZMA'd texture:
 
 /* ... */
 
-std::vector<uint8_t> vTexData; // Contains the index's file data
+std::vector<std::uint8_t> vTexData; // Contains the index's file data
 
 try
 {
     auto pTex = uc2::LzmaTexture::Create(vTexData);
 
-    uint64_t iOrigSize = pTex->GetOriginalSize();
+    std::uint64_t iOrigSize = pTex->GetOriginalSize();
 
     if (iOrigSize == 0)
     {
         /* handle failure */
     }
 
-    std::vector<uint8_t> buff(iOrigSize);
+    std::vector<std::uint8_t> buff(iOrigSize);
     bool bDecompressed = pTex->Decompress(buff.data(), buff.size());
 }
 catch (const std::exception& e)
