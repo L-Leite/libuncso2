@@ -9,25 +9,71 @@
 
 namespace uc2
 {
+constexpr const uint16_t ENCRYPTED_FILE_VERSION = 2;
+
 EncryptedFile::ptr_t EncryptedFile::Create(
-    std::string_view fileName, std::vector<uint8_t>& fileData,
-    const uint8_t (&keyCollection)[4][16])
+    std::string_view fileName, std::vector<std::uint8_t>& fileData,
+    const std::uint8_t (&keyCollection)[4][16])
 {
     return std::make_unique<EncryptedFileImpl>(fileName, fileData,
                                                keyCollection);
 }
 
+EncryptedFile::ptr_t EncryptedFile::Create(
+    std::string_view fileName, std::uint8_t* pData,
+    const std::uint64_t iDataSize, const std::uint8_t (&keyCollection)[4][16])
+{
+    return EncryptedFileImpl::CreateSpan(
+        fileName, gsl::span<uint8_t>(pData, iDataSize), keyCollection);
+}
+
 EncryptedFile::ptr_t EncryptedFileImpl::CreateSpan(
-    std::string_view fileName, gsl::span<uint8_t> fileDataView,
-    gsl::span<const uint8_t[4][16]> keyCollectionView)
+    std::string_view fileName, gsl::span<std::uint8_t> fileDataView,
+    gsl::span<const std::uint8_t[4][16]> keyCollectionView)
 {
     return std::make_unique<EncryptedFileImpl>(fileName, fileDataView,
                                                keyCollectionView);
 }
 
+bool EncryptedFile::IsEncryptedFile(std::uint8_t* pData,
+                                    const std::uint64_t iDataSize)
+{
+    gsl::span<uint8_t> dataView(pData, iDataSize);
+
+    if (iDataSize < sizeof(EncryptedFileHeader_t))
+    {
+        return false;
+    }
+
+    auto pHeader =
+        AddOffsetToBase<const EncryptedFileHeader_t>(dataView.data());
+
+    if (pHeader->version != ENCRYPTED_FILE_VERSION)
+    {
+        return false;
+    }
+
+    // Don't validate the data's size, since the user may only provide the
+    // header's data only
+    /*const uint32_t iPredictedSize =
+        sizeof(EncryptedFileHeader_t) + pHeader->fileSize;
+
+    if (iPredictedSize > iDataSize)
+    {
+        return false;
+    } */
+
+    return true;
+}
+
+uint64_t EncryptedFile::GetHeaderSize()
+{
+    return sizeof(EncryptedFileHeader_t);
+}
+
 EncryptedFileImpl::EncryptedFileImpl(std::string_view fileName,
-                                     std::vector<uint8_t>& fileData,
-                                     const uint8_t (&keyCollection)[4][16])
+                                     std::vector<std::uint8_t>& fileData,
+                                     const std::uint8_t (&keyCollection)[4][16])
     : m_szvFileName(fileName), m_FileDataView(fileData),
       m_KeyCollectionView(&keyCollection, 16 * 4)
 {
@@ -38,8 +84,8 @@ EncryptedFileImpl::EncryptedFileImpl(std::string_view fileName,
 }
 
 EncryptedFileImpl::EncryptedFileImpl(
-    std::string_view fileName, gsl::span<uint8_t> fileDataView,
-    gsl::span<const uint8_t[4][16]> keyCollectionView)
+    std::string_view fileName, gsl::span<std::uint8_t> fileDataView,
+    gsl::span<const std::uint8_t[4][16]> keyCollectionView)
     : m_szvFileName(fileName), m_FileDataView(fileDataView),
       m_KeyCollectionView(keyCollectionView)
 {
@@ -63,7 +109,7 @@ bool EncryptedFileImpl::IsHeaderValid() const
     auto pHeader = AddOffsetToBase<const EncryptedFileHeader_t>(
         this->m_FileDataView.data());
 
-    const uint32_t iPredictedSize =
+    const std::uint32_t iPredictedSize =
         sizeof(EncryptedFileHeader_t) + pHeader->fileSize;
 
     if (iPredictedSize > iFileDataSize)
@@ -74,21 +120,21 @@ bool EncryptedFileImpl::IsHeaderValid() const
     return true;
 }
 
-std::pair<uint8_t*, size_t> EncryptedFileImpl::Decrypt()
+std::pair<std::uint8_t*, std::size_t> EncryptedFileImpl::Decrypt()
 {
     auto pHeader = AddOffsetToBase<const EncryptedFileHeader_t>(
         this->m_FileDataView.data());
 
-    std::vector<uint8_t> digestedKey = GeneratePkgIndexKey(
+    std::vector<std::uint8_t> digestedKey = GeneratePkgIndexKey(
         pHeader->flag, this->m_szvFileName, this->m_KeyCollectionView);
 
-    auto pDataStart = AddOffsetToBase<uint8_t>(this->m_FileDataView.data(),
-                                               sizeof(EncryptedFileHeader_t));
+    auto pDataStart = AddOffsetToBase<std::uint8_t>(
+        this->m_FileDataView.data(), sizeof(EncryptedFileHeader_t));
 
     auto pCipher = CreateIndexCipher(pHeader->cipher);
     CDecryptor decryptor(pCipher.get(), digestedKey);
 
-    size_t iNewDataSize =
+    std::size_t iNewDataSize =
         decryptor.DecryptInBuffer(pDataStart, pHeader->fileSize);
 
     assert(iNewDataSize <= pHeader->fileSize);

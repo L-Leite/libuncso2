@@ -12,8 +12,8 @@
 
 #include "uc2defs.h"
 
-#include <stdint.h>
 #include <array>
+#include <cstdint>
 #include <memory>
 #include <string_view>
 #include <vector>
@@ -44,10 +44,30 @@ public:
      *
      * Decrypts the file through the same decryption method in PkgIndex.
      *
-     * @return std::pair<uint8_t*, size_t> A pair with the buffer pointer and
-     * the buffer's length.
+     * @return std::pair<std::uint8_t*, size_t> A pair with the buffer pointer
+     * and the buffer's length.
      */
-    virtual std::pair<uint8_t*, size_t> Decrypt() = 0;
+    virtual std::pair<std::uint8_t*, size_t> Decrypt() = 0;
+
+    /**
+     * @brief Does the buffer data's have an encrypted file header?
+     *
+     * Validates the data's size and checks the header's magic signature.
+     *
+     * @param pData The buffer data.
+     * @param iDataSize The buffer's size.
+     * @return true If the buffer data has an encrypted file header.
+     * @return false If the buffer data does NOT have an encrypted file header.
+     */
+    static bool IsEncryptedFile(std::uint8_t* pData,
+                                const std::uint64_t iDataSize);
+
+    /**
+     * @brief Gets the size of an encrypted file's header.
+     *
+     * @return uint64_t The size of an encrypted file's header.
+     */
+    static uint64_t GetHeaderSize();
 
     /**
      * @brief Construct a new EncryptedFile object.
@@ -66,6 +86,26 @@ public:
      */
     static ptr_t Create(std::string_view fileName,
                         std::vector<uint8_t>& fileData,
-                        const uint8_t (&keyCollection)[4][16]);
+                        const std::uint8_t (&keyCollection)[4][16]);
+
+    /**
+     * @brief Construct a new EncryptedFile object.
+     *
+     * The data referenced in the fileData paramater may and will be modified.
+     *
+     * This method throws exceptions:
+     * - It throws std::invalid_argument when the file's header is invalid.
+     *
+     * @param fileName The encrypted file's name.
+     * @param pData The encrypted file's data buffer.
+     * @param iDataSize The encrypted file's data buffer size.
+     * @param keyCollection The key collection to decrypt with. It must have 4
+     * keys, and each key must be 16 bytes long-
+     *
+     * @return ptr_t the new EncryptedFile object.
+     */
+    static ptr_t Create(std::string_view fileName, std::uint8_t* pData,
+                        const std::uint64_t iDataSize,
+                        const std::uint8_t (&keyCollection)[4][16]);
 };
 }  // namespace uc2
