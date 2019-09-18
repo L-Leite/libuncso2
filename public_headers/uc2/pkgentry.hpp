@@ -46,10 +46,14 @@ public:
      * - It throws std::runtime_error when it tries to decrypt a file larger
      * than its host PKG file.
      *
+     * @param iBytesToDecrypt How many file bytes should be decrypted? Default
+     * is zero, which means 'decrypt everything'.
+     *
      * @return std::pair<uint8_t*, uint64_t> the file's buffer pointer and the
      * buffer's size
      */
-    virtual std::pair<uint8_t*, uint64_t> DecryptFile() = 0;
+    virtual std::pair<uint8_t*, uint64_t> DecryptFile(
+        const uint64_t iBytesToDecrypt = 0) = 0;
 
     /**
      * @brief Get the file's path.

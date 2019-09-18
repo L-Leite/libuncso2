@@ -31,8 +31,9 @@ extern "C"
      * @return true If the data was decrypted successfully.
      * @return false If the function failed to decrypt the data.
      */
-    UNCSO2_API bool UNCSO2_CALLMETHOD uncso2_PkgEntry_Decrypt(
-        PkgEntry_t entryHandle, void** outBuffer, uint64_t* outSize);
+    UNCSO2_API bool UNCSO2_CALLMETHOD
+    uncso2_PkgEntry_Decrypt(PkgEntry_t entryHandle, void** outBuffer,
+                            uint64_t* outSize, uint64_t bytesToDecrypt = 0);
 
     /**
      * @brief Get the file's path.

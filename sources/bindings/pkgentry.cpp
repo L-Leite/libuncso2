@@ -5,9 +5,9 @@
 extern "C"
 {
 #endif
-    bool UNCSO2_CALLMETHOD uncso2_PkgEntry_Decrypt(PkgEntry_t entryHandle,
-                                                   void** outBuffer,
-                                                   uint64_t* outSize)
+    bool UNCSO2_CALLMETHOD
+    uncso2_PkgEntry_Decrypt(PkgEntry_t entryHandle, void** outBuffer,
+                            uint64_t* outSize, uint64_t bytesToDecrypt /*= 0 */)
     {
         if (entryHandle == NULL || outBuffer == NULL || outSize == NULL)
         {
@@ -18,7 +18,7 @@ extern "C"
 
         try
         {
-            auto result = pEntry->DecryptFile();
+            auto result = pEntry->DecryptFile(bytesToDecrypt);
 
             *outBuffer = result.first;
             *outSize = result.second;
