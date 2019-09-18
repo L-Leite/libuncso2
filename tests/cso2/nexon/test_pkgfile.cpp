@@ -28,6 +28,8 @@ TEST_CASE("Pkg file can be decrypted and parsed", "[pkgfile]")
                 auto pPkgFile = uc2::PkgFile::Create(
                     cso2::PkgFilenames[i], vFileBuffer,
                     cso2::PackageEntryKeys[i], cso2::PackageFileKeys[i]);
+
+                pPkgFile->DecryptHeader();
                 pPkgFile->Parse();
 
                 REQUIRE(pPkgFile->GetEntries().size() ==
@@ -42,6 +44,85 @@ TEST_CASE("Pkg file can be decrypted and parsed", "[pkgfile]")
 
                     iCurIndex++;
                 }
+            }
+            catch (const std::exception& e)
+            {
+                std::cerr << e.what() << '\n';
+                throw e;
+            }
+        }
+    }
+}
+
+TEST_CASE("Pkg file partially decrypting an entry", "[pkgfile]")
+{
+    SECTION("Can decrypt 16 bytes of an entry")
+    {
+        for (size_t i = 0; i < cso2::NUM_PROVIDERS; i++)
+        {
+            auto [bWasRead, vFileBuffer] =
+                ReadFileToBuffer(cso2::PkgFilenames[i]);
+
+            REQUIRE(bWasRead == true);
+            REQUIRE(vFileBuffer.empty() == false);
+
+            try
+            {
+                auto pPkgFile = uc2::PkgFile::Create(
+                    cso2::PkgFilenames[i], vFileBuffer,
+                    cso2::PackageEntryKeys[i], cso2::PackageFileKeys[i]);
+
+                pPkgFile->DecryptHeader();
+                pPkgFile->Parse();
+
+                REQUIRE(pPkgFile->GetEntries().size() ==
+                        cso2::PackageFileCounts[i]);
+
+                constexpr const uint64_t iTargetFileLen = 16;
+
+                auto&& entry = pPkgFile->GetEntries().at(0);
+                auto [fileData, fileDataLen] =
+                    entry->DecryptFile(iTargetFileLen);
+
+                REQUIRE(fileDataLen == iTargetFileLen);
+            }
+            catch (const std::exception& e)
+            {
+                std::cerr << e.what() << '\n';
+                throw e;
+            }
+        }
+    }
+    SECTION("Can decrypt 23 bytes of an entry")
+    {
+        for (size_t i = 0; i < cso2::NUM_PROVIDERS; i++)
+        {
+            auto [bWasRead, vFileBuffer] =
+                ReadFileToBuffer(cso2::PkgFilenames[i]);
+
+            REQUIRE(bWasRead == true);
+            REQUIRE(vFileBuffer.empty() == false);
+
+            try
+            {
+                auto pPkgFile = uc2::PkgFile::Create(
+                    cso2::PkgFilenames[i], vFileBuffer,
+                    cso2::PackageEntryKeys[i], cso2::PackageFileKeys[i]);
+
+                pPkgFile->DecryptHeader();
+                pPkgFile->Parse();
+
+                REQUIRE(pPkgFile->GetEntries().size() ==
+                        cso2::PackageFileCounts[i]);
+
+                constexpr const uint64_t iTargetFileLen = 23;
+                constexpr const uint64_t iExpectedFileLen = 32;
+
+                auto&& entry = pPkgFile->GetEntries().at(0);
+                auto [fileData, fileDataLen] =
+                    entry->DecryptFile(iTargetFileLen);
+
+                REQUIRE(fileDataLen == iExpectedFileLen);
             }
             catch (const std::exception& e)
             {
@@ -70,8 +151,11 @@ TEST_CASE("Pkg file can be decrypted and parsed using C bindings", "[pkgfile]")
                 cso2::PackageFileKeys[i].data());
             REQUIRE(pPkg != NULL);
 
-            bool bWasParsed = uncso2_PkgFile_Parse(pPkg);
-            REQUIRE(bWasParsed == true);
+            bool bHeaderDecrypted = uncso2_PkgFile_DecryptHeader(pPkg);
+            REQUIRE(bHeaderDecrypted == true);
+
+            bool bParsed = uncso2_PkgFile_Parse(pPkg);
+            REQUIRE(bParsed == true);
 
             uint64_t iEntriesNum = uncso2_PkgFile_GetEntriesNum(pPkg);
             PkgEntry_t* pEntries = uncso2_PkgFile_GetEntries(pPkg);

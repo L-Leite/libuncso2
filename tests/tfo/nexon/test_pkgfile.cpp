@@ -28,6 +28,8 @@ TEST_CASE("TFO Pkg file can be decrypted and parsed", "[pkgfile]")
             auto pPkgFile = uc2::PkgFile::Create(
                 tfo::PkgFilename, vFileBuffer, tfo::PackageEntryKey,
                 tfo::PackageFileKey, pPkgOptions.get());
+
+            pPkgFile->DecryptHeader();
             pPkgFile->Parse();
 
             REQUIRE(pPkgFile->GetEntries().size() == tfo::PackageFileCount);
@@ -42,6 +44,79 @@ TEST_CASE("TFO Pkg file can be decrypted and parsed", "[pkgfile]")
 
                 iCurIndex++;
             }
+        }
+        catch (const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+            throw e;
+        }
+    }
+}
+
+TEST_CASE("TFO Pkg file partially decrypting an entry", "[pkgfile]")
+{
+    SECTION("Can decrypt 16 bytes of an entry")
+    {
+        auto [bWasRead, vFileBuffer] = ReadFileToBuffer(tfo::PkgFilename);
+
+        REQUIRE(bWasRead == true);
+        REQUIRE(vFileBuffer.empty() == false);
+
+        try
+        {
+            auto pPkgOptions = uc2::PkgFileOptions::Create();
+            pPkgOptions->SetTfoPkg(true);
+
+            auto pPkgFile = uc2::PkgFile::Create(
+                tfo::PkgFilename, vFileBuffer, tfo::PackageEntryKey,
+                tfo::PackageFileKey, pPkgOptions.get());
+
+            pPkgFile->DecryptHeader();
+            pPkgFile->Parse();
+
+            REQUIRE(pPkgFile->GetEntries().size() == tfo::PackageFileCount);
+
+            constexpr const uint64_t iTargetFileLen = 16;
+
+            auto&& entry = pPkgFile->GetEntries().at(0);
+            auto [fileData, fileDataLen] = entry->DecryptFile(iTargetFileLen);
+
+            REQUIRE(fileDataLen == iTargetFileLen);
+        }
+        catch (const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+            throw e;
+        }
+    }
+    SECTION("Can decrypt 23 bytes of an entry")
+    {
+        auto [bWasRead, vFileBuffer] = ReadFileToBuffer(tfo::PkgFilename);
+
+        REQUIRE(bWasRead == true);
+        REQUIRE(vFileBuffer.empty() == false);
+
+        try
+        {
+            auto pPkgOptions = uc2::PkgFileOptions::Create();
+            pPkgOptions->SetTfoPkg(true);
+
+            auto pPkgFile = uc2::PkgFile::Create(
+                tfo::PkgFilename, vFileBuffer, tfo::PackageEntryKey,
+                tfo::PackageFileKey, pPkgOptions.get());
+
+            pPkgFile->DecryptHeader();
+            pPkgFile->Parse();
+
+            REQUIRE(pPkgFile->GetEntries().size() == tfo::PackageFileCount);
+
+            constexpr const uint64_t iTargetFileLen = 23;
+            constexpr const uint64_t iExpectedFileLen = 32;
+
+            auto&& entry = pPkgFile->GetEntries().at(0);
+            auto [fileData, fileDataLen] = entry->DecryptFile(iTargetFileLen);
+
+            REQUIRE(fileDataLen == iExpectedFileLen);
         }
         catch (const std::exception& e)
         {
@@ -73,8 +148,11 @@ TEST_CASE("TFO Pkg file can be decrypted and parsed using C bindings",
 
         uncso2_PkgFileOptions_Free(pOptions);
 
-        bool bWasParsed = uncso2_PkgFile_Parse(pPkg);
-        REQUIRE(bWasParsed == true);
+        bool bHeaderDecrypted = uncso2_PkgFile_DecryptHeader(pPkg);
+        REQUIRE(bHeaderDecrypted == true);
+
+        bool bParsed = uncso2_PkgFile_Parse(pPkg);
+        REQUIRE(bParsed == true);
 
         uint64_t iEntriesNum = uncso2_PkgFile_GetEntriesNum(pPkg);
         PkgEntry_t* pEntries = uncso2_PkgFile_GetEntries(pPkg);
