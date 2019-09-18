@@ -19,16 +19,21 @@ TEST_CASE("Can decrypt .e* files", "[encfile]")
     {
         for (size_t i = 0; i < cso2::NUM_PROVIDERS; i++)
         {
-            auto [bWasRead, vIndexBuffer] =
+            auto [bWasRead, vFileBuffer] =
                 ReadFileToBuffer(cso2::EncryptedFileNames[i]);
 
             REQUIRE(bWasRead == true);
-            REQUIRE(vIndexBuffer.empty() == false);
+            REQUIRE(vFileBuffer.empty() == false);
+
+            bool bIsEncryptedFile = uc2::EncryptedFile::IsEncryptedFile(
+                vFileBuffer.data(), vFileBuffer.size());
+
+            REQUIRE(bIsEncryptedFile == true);
 
             try
             {
                 auto pEncryptedFile = uc2::EncryptedFile::Create(
-                    cso2::RealEncryptedFileNames[i], vIndexBuffer,
+                    cso2::RealEncryptedFileNames[i], vFileBuffer,
                     cso2::IndexKeyCollections[i]);
                 auto [fileData, fileSize] = pEncryptedFile->Decrypt();
 
@@ -50,15 +55,20 @@ TEST_CASE("Can decrypt .e* files with C bindings", "[encfile]")
     {
         for (size_t i = 0; i < cso2::NUM_PROVIDERS; i++)
         {
-            auto [bWasRead, vIndexBuffer] =
+            auto [bWasRead, vFileBuffer] =
                 ReadFileToBuffer(cso2::EncryptedFileNames[i]);
 
             REQUIRE(bWasRead == true);
-            REQUIRE(vIndexBuffer.empty() == false);
+            REQUIRE(vFileBuffer.empty() == false);
+
+            bool bIsEncryptedFile = uncso2_EncryptedFile_IsEncryptedFile(
+                vFileBuffer.data(), vFileBuffer.size());
+
+            REQUIRE(bIsEncryptedFile == true);
 
             EncryptedFile_t pFile = uncso2_EncryptedFile_Create(
-                cso2::RealEncryptedFileNames[i].data(), vIndexBuffer.data(),
-                vIndexBuffer.size(), &cso2::IndexKeyCollections[i]);
+                cso2::RealEncryptedFileNames[i].data(), vFileBuffer.data(),
+                vFileBuffer.size(), &cso2::IndexKeyCollections[i]);
             REQUIRE(pFile != NULL);
 
             uint8_t* pOutBuf = nullptr;
