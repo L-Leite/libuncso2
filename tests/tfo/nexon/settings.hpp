@@ -1,19 +1,18 @@
 #pragma once
 
 #include <array>
-#include <string_view>
+#include <string>
 
-using namespace std::literals::string_view_literals;
+using namespace std::literals::string_literals;
 
 namespace tfo
 {
 //
 // Index data START
 //
-constexpr const std::string_view IndexFilename = "index_tfo.pkg"sv;
+const std::string IndexFilename = "index_tfo.pkg"s;
 
-constexpr const std::string_view IndexRealFilename =
-    "1b87c6b551e518d11114ee21b7645a47.pkg"sv;
+const std::string IndexRealFilename = "1b87c6b551e518d11114ee21b7645a47.pkg"s;
 
 constexpr const uint64_t IndexFileCount = 1077;
 
@@ -34,17 +33,15 @@ constexpr const uint8_t IndexKeyCollection[4][16] = {
 //
 // PKG data START
 //
-constexpr const std::string_view PkgFilename =
-    "0a4b4196394ecf251c532f1552ccf3b3.pkg"sv;
+const std::string PkgFilename = "0a4b4196394ecf251c532f1552ccf3b3.pkg"s;
 
-constexpr const std::string_view PackageEntryKey =
-    "lkgui781kl789sd!@#%89&^sd"sv;
+const std::string PackageEntryKey = "lkgui781kl789sd!@#%89&^sd"s;
 
-constexpr const std::string_view PackageFileKey = "^9gErg2Sx7bnk7@#sdfjnh@"sv;
+const std::string PackageFileKey = "^9gErg2Sx7bnk7@#sdfjnh@"s;
 
 constexpr const uint64_t PackageFileCount = 4;
 
-constexpr const std::array<std::string_view, 4> PackageFileHashes = {
+const std::array<std::string, 4> PackageFileHashes = {
     "42d3b7b74b8feb7f6801930ba58aef6bb85fa2d8a465cffef36c906566cbeeb4",
     "58389be7fbcaa33e143c8e7ed85b7ed73e5d69d095972e9d260a4171ed959224",
     "2968dce6245f50c7ae9803e1b765ff9ed7705a459c4041f4623a46dea24b9873",
