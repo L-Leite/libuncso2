@@ -1,7 +1,7 @@
 #include "decryptor.hpp"
 
 #include <assert.h>
-#include <stdint.h>
+#include <cstdint>
 #include <stdexcept>
 #include <string>
 
@@ -71,7 +71,8 @@ void CDecryptor::Initialize(std::string_view key, std::string_view iv,
     this->m_pCipher->Initialize(key, iv, paddingEnabled);
 }
 
-std::vector<uint8_t> CDecryptor::Decrypt(std::vector<uint8_t>& data) const
+std::vector<std::uint8_t> CDecryptor::Decrypt(
+    std::vector<std::uint8_t>& data) const
 {
     return this->Decrypt(data.data(), data.size());
 }
@@ -79,12 +80,18 @@ std::vector<uint8_t> CDecryptor::Decrypt(std::vector<uint8_t>& data) const
 size_t CDecryptor::Decrypt(const void* pStart, void* pOutBuffer,
                            const size_t iLength) const
 {
-    return this->m_pCipher->Decrypt(pStart, pOutBuffer, iLength);
+    gsl::span<const uint8_t> inData(static_cast<const std::uint8_t*>(pStart),
+                                    iLength);
+    gsl::span<uint8_t> outData(static_cast<std::uint8_t*>(pOutBuffer), iLength);
+    return this->m_pCipher->Decrypt(inData, outData);
 }
 
 size_t CDecryptor::DecryptInBuffer(void* pBuffer, const size_t iLength) const
 {
-    return this->m_pCipher->Decrypt(pBuffer, pBuffer, iLength);
+    gsl::span<const uint8_t> inData(static_cast<const std::uint8_t*>(pBuffer),
+                                    iLength);
+    gsl::span<uint8_t> outData(static_cast<std::uint8_t*>(pBuffer), iLength);
+    return this->m_pCipher->Decrypt(inData, outData);
 }
 
 std::vector<uint8_t> CDecryptor::Decrypt(const void* pStart,
@@ -92,7 +99,10 @@ std::vector<uint8_t> CDecryptor::Decrypt(const void* pStart,
 {
     std::vector<uint8_t> vOutData(iLength);
 
-    this->m_pCipher->Decrypt(pStart, vOutData.data(), iLength);
+    gsl::span<const uint8_t> inData(static_cast<const std::uint8_t*>(pStart),
+                                    iLength);
+
+    this->m_pCipher->Decrypt(inData, vOutData);
 
     return vOutData;
 }

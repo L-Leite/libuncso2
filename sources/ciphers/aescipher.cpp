@@ -18,8 +18,8 @@ void CAesCipher::Initialize(std::string_view key, std::string_view iv,
     this->m_bPaddingEnabled = paddingEnabled;
 }
 
-uint64_t CAesCipher::Decrypt(const void* pStart, void* pOutBuffer,
-                             const uint64_t iLength)
+uint64_t CAesCipher::Decrypt(gsl::span<const std::uint8_t> inData,
+                             gsl::span<std::uint8_t> outBuffer)
 {
     CryptoPP::CBC_Mode<CryptoPP::AES>::Decryption dec;
 
@@ -31,13 +31,13 @@ uint64_t CAesCipher::Decrypt(const void* pStart, void* pOutBuffer,
                       CryptoPP::BlockPaddingSchemeDef::DEFAULT_PADDING :
                       CryptoPP::BlockPaddingSchemeDef::NO_PADDING;
 
-    CryptoPP::StreamTransformationFilter filter(dec, nullptr, scheme);
-    filter.Put(static_cast<const uint8_t*>(pStart), iLength);
-    filter.MessageEnd();
+    auto sink =
+        new CryptoPP::ArraySink(outBuffer.data(), outBuffer.size_bytes());
+    auto filter = new CryptoPP::StreamTransformationFilter(dec, sink, scheme);
 
-    const size_t iNewLength = filter.MaxRetrievable();
-    filter.Get(static_cast<uint8_t*>(pOutBuffer), iLength);
+    CryptoPP::StringSource source(inData.data(), inData.size_bytes(), true,
+                                  filter);
 
-    return iNewLength;
+    return sink->TotalPutLength();
 }
 }  // namespace uc2
