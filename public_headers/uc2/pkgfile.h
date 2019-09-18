@@ -47,6 +47,86 @@ extern "C"
     UNCSO2_API void UNCSO2_CALLMETHOD uncso2_PkgFile_Free(PkgFile_t pkgHandle);
 
     /**
+     * @brief Gets the PkgFile's file name.
+     *
+     * @return const char* The PkgFile's file name.
+     */
+    UNCSO2_API const char* UNCSO2_CALLMETHOD
+    uncso2_PkgFile_GetFilename(PkgFile_t pkgHandle);
+
+    /**
+     * @brief Sets the header key to use with the PkgFile.
+     *
+     * @param pkgHandle The PkgFile's object handle.
+     * @param szNewEntryKey the new header key.
+     */
+    UNCSO2_API void UNCSO2_CALLMETHOD
+    uncso2_PkgFile_SetEntryKey(PkgFile_t pkgHandle, const char* szNewEntryKey);
+
+    /**
+     * @brief Sets the data key to use with the PkgFile.
+     *
+     * @param pkgHandle The PkgFile's object handle.
+     * @param szNewDataKey the new data key.
+     */
+    UNCSO2_API void UNCSO2_CALLMETHOD
+    uncso2_PkgFile_SetDataKey(PkgFile_t pkgHandle, const char* szNewDataKey);
+
+    /**
+     * @brief Set the PKG file as a TFO PKG file.
+     *
+     * Treats the PKG file as if it's from Titanfall Online.
+     *
+     * @param pkgHandle The PkgFile's object handle.
+     * @param bNewState The new TFO PKG file state.
+     */
+    UNCSO2_API void UNCSO2_CALLMETHOD
+    uncso2_PkgFile_SetTfoPkg(PkgFile_t pkgHandle, bool bNewState);
+
+    /**
+     * @brief Set a new data buffer to use with the PkgFile.
+     *
+     * @param pkgHandle The PkgFile's object handle.
+     * @param dataBuffer The new data buffer.
+     * @param dataSize The new data buffer's size.
+     */
+    UNCSO2_API void UNCSO2_CALLMETHOD uncso2_PkgFile_SetDataBuffer(
+        PkgFile_t pkgHandle, void* dataBuffer, uint64_t dataSize);
+
+    /**
+     * @brief Invalidate the stored buffer.
+     *
+     * @param pkgHandle The PkgFile's object handle.
+     */
+    UNCSO2_API void UNCSO2_CALLMETHOD
+    uncso2_PkgFile_ReleaseDataBuffer(PkgFile_t pkgHandle);
+
+    /**
+     * @brief Get the whole header size of a PKG file.
+     *
+     * Returns the size of the PKG's header and entries.
+     *
+     * It's enough to provide a buffer with the length returned by the
+     * uncso2_PkgFile_GetHeaderSize function. Any more data will be ignored.
+     *
+     * @param pkgHandle The PkgFile's object handle.
+     *
+     * @return uint64_t The PKG header's size.
+     */
+    UNCSO2_API uint64_t UNCSO2_CALLMETHOD
+    uncso2_PkgFile_GetFullHeaderSize(PkgFile_t pkgHandle);
+
+    /*
+     * @brief Decrypts the PKG file header
+     *
+     * Decrypts the PKG's file header using the entry key given by the user.
+     *
+     * @param pkgHandle The PkgFile's object handle.
+     */
+    UNCSO2_API bool UNCSO2_CALLMETHOD
+    uncso2_PkgFile_DecryptHeader(PkgFile_t pkgHandle);
+
+    /**
      * @brief Decrypts and parses pkg files.
      *
      * Decrypt's the pkg file's header, parses it, and reads the file entries in
@@ -82,6 +162,16 @@ extern "C"
      */
     UNCSO2_API PkgEntry_t* UNCSO2_CALLMETHOD
     uncso2_PkgFile_GetEntries(PkgFile_t pkgHandle);
+
+    /**
+     * @brief Get the header size of a PKG file.
+     *
+     * @param bTfoPkg Should the Titanfall Online PKG header's size be
+     * retrieved?
+     * @return uint64_t The PKG header's size.
+     */
+    UNCSO2_API uint64_t UNCSO2_CALLMETHOD
+    uncso2_PkgFile_GetHeaderSize(bool bTfoPkg);
 
 #ifdef __cplusplus
 }

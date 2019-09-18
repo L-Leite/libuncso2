@@ -32,6 +32,127 @@ extern "C"
         delete pPkg;
     }
 
+    const char* UNCSO2_CALLMETHOD
+    uncso2_PkgFile_GetFilename(PkgFile_t pkgHandle)
+    {
+        if (pkgHandle == NULL)
+        {
+            return nullptr;
+        }
+
+        auto pPkg = reinterpret_cast<uc2::PkgFile*>(pkgHandle);
+
+        return pPkg->GetFilename().data();
+    }
+
+    void UNCSO2_CALLMETHOD uncso2_PkgFile_SetEntryKey(PkgFile_t pkgHandle,
+                                                      const char* szNewEntryKey)
+    {
+        if (pkgHandle == NULL)
+        {
+            return;
+        }
+
+        auto pPkg = reinterpret_cast<uc2::PkgFile*>(pkgHandle);
+
+        pPkg->SetEntryKey(szNewEntryKey);
+    }
+
+    void UNCSO2_CALLMETHOD uncso2_PkgFile_SetDataKey(PkgFile_t pkgHandle,
+                                                     const char* szNewDataKey)
+    {
+        if (pkgHandle == NULL)
+        {
+            return;
+        }
+
+        auto pPkg = reinterpret_cast<uc2::PkgFile*>(pkgHandle);
+
+        pPkg->SetDataKey(szNewDataKey);
+    }
+
+    void UNCSO2_CALLMETHOD uncso2_PkgFile_SetTfoPkg(PkgFile_t pkgHandle,
+                                                    bool bNewState)
+    {
+        if (pkgHandle == NULL)
+        {
+            return;
+        }
+
+        auto pPkg = reinterpret_cast<uc2::PkgFile*>(pkgHandle);
+
+        pPkg->SetTfoPkg(bNewState);
+    }
+
+    void UNCSO2_CALLMETHOD uncso2_PkgFile_SetDataBuffer(PkgFile_t pkgHandle,
+                                                        void* dataBuffer,
+                                                        uint64_t dataSize)
+    {
+        if (pkgHandle == NULL)
+        {
+            return;
+        }
+
+        auto pPkg = reinterpret_cast<uc2::PkgFileImpl*>(pkgHandle);
+
+        gsl::span<uint8_t> dataView(reinterpret_cast<uint8_t*>(dataBuffer),
+                                    dataSize);
+
+        pPkg->SetDataBufferSpan(dataView);
+    }
+
+    void UNCSO2_CALLMETHOD uncso2_PkgFile_ReleaseDataBuffer(PkgFile_t pkgHandle)
+    {
+        if (pkgHandle == NULL)
+        {
+            return;
+        }
+
+        auto pPkg = reinterpret_cast<uc2::PkgFile*>(pkgHandle);
+
+        pPkg->ReleaseDataBuffer();
+    }
+
+    uint64_t UNCSO2_CALLMETHOD
+    uncso2_PkgFile_GetFullHeaderSize(PkgFile_t pkgHandle)
+    {
+        if (pkgHandle == NULL)
+        {
+            return 0;
+        }
+
+        auto pPkg = reinterpret_cast<uc2::PkgFile*>(pkgHandle);
+
+        try
+        {
+            return pPkg->GetFullHeaderSize();
+        }
+        catch (const std::exception& e)
+        {
+            return 0;
+        }
+    }
+
+    bool UNCSO2_CALLMETHOD uncso2_PkgFile_DecryptHeader(PkgFile_t pkgHandle)
+    {
+        if (pkgHandle == NULL)
+        {
+            return false;
+        }
+
+        auto pPkg = reinterpret_cast<uc2::PkgFile*>(pkgHandle);
+
+        try
+        {
+            pPkg->DecryptHeader();
+            return true;
+        }
+        catch (const std::exception& e)
+        {
+            return false;
+        }
+    }
+
     bool UNCSO2_CALLMETHOD uncso2_PkgFile_Parse(PkgFile_t pkgHandle)
     {
         if (pkgHandle == NULL)
@@ -88,6 +209,11 @@ extern "C"
         {
             return 0;
         }
+    }
+
+    uint64_t UNCSO2_CALLMETHOD uncso2_PkgFile_GetHeaderSize(bool bTfoPkg)
+    {
+        return uc2::PkgFile::GetHeaderSize(bTfoPkg);
     }
 #endif
 

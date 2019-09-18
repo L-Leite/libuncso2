@@ -10,11 +10,10 @@ public:
     PkgFileOptionsImpl();
     virtual ~PkgFileOptionsImpl();
 
-    virtual void SetTfoPkg(bool state);
+    virtual void SetTfoPkg(bool state) override;
+    virtual bool IsTfoPkg() override;
 
     static ptr_t Create();
-
-    virtual bool IsTfoPkg();
 
 private:
     bool m_bIsTfoPkg;

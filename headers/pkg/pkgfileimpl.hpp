@@ -5,52 +5,83 @@
 #include <gsl/gsl>
 #include <string>
 
+#include "pkg/pkgstructures.hpp"
+
 namespace uc2
 {
 class PkgFileImpl : public PkgFile
 {
 public:
-    PkgFileImpl(std::string_view szvFilename, std::vector<uint8_t>& fileData,
-                std::string_view szvEntryKey, std::string_view szvDataKey,
+    PkgFileImpl(std::string szFilename, std::vector<uint8_t>& fileData,
+                std::string szEntryKey = {}, std::string szDataKey = {},
                 PkgFileOptions* options = nullptr);
-    PkgFileImpl(std::string_view szvFilename, gsl::span<uint8_t> fileDataView,
-                std::string_view szvEntryKey, std::string_view szvDataKey,
+    PkgFileImpl(std::string szFilename, gsl::span<uint8_t> fileDataView,
+                std::string szEntryKey = {}, std::string szDataKey = {},
                 PkgFileOptions* pOptions = nullptr);
-    virtual ~PkgFileImpl();
+    virtual ~PkgFileImpl() override;
 
-    virtual void Parse();
+    virtual std::string_view GetFilename() override;
 
-    virtual std::vector<entryptr_t>& GetEntries();
+    virtual void SetEntryKey(std::string szNewEntryKey) override;
+    virtual void SetDataKey(std::string szNewDataKey) override;
+    virtual void SetTfoPkg(bool bNewState) override;
 
-    static ptr_t CreateSpan(std::string_view szvFilename,
-                            gsl::span<uint8_t> fileDataView,
-                            std::string_view szvEntryKey,
-                            std::string_view szvDataKey,
+    virtual void SetDataBuffer(std::vector<uint8_t>& newFileData) override;
+    void SetDataBufferSpan(gsl::span<uint8_t> newDataBuffer);
+    virtual void ReleaseDataBuffer() override;
+
+    virtual uint64_t GetFullHeaderSize() override;
+
+    virtual std::string_view GetMd5Hash() override;
+
+    virtual bool DecryptHeader() override;
+    virtual void Parse() override;
+
+    virtual std::vector<entryptr_t>& GetEntries() override;
+
+    static ptr_t CreateSpan(std::string szFilename,
+                            gsl::span<uint8_t> fileDataView = {},
+                            std::string szEntryKey = {},
+                            std::string szDataKey = {},
                             PkgFileOptions* pOptions = nullptr);
 
+    template <typename PkgHeaderType>
+    uint64_t GetFullHeaderSizeInternal() const;
+
 private:
-    void Initialize(std::string_view szvEntryKey, PkgFileOptions* pOptions);
+    void Initialize(std::string szEntryKey, PkgFileOptions* pOptions);
 
     template <typename PkgHeaderType>
-    void ValidateInit();
+    void ValidateInit() const;
+
+    bool IsHeaderDecrypted() const;
+    template <typename PkgHeaderType>
+    bool IsHeaderDecryptedInternal() const;
 
     template <typename PkgHeaderType>
-    void DecryptHeader();
+    bool DecryptHeaderInternal();
     template <typename PkgHeaderType>
     void ParseEntries();
 
-    template <typename T>
-    T* GetData(uint64_t offset = 0);
+    void UpdateEntriesDataView();
+
+    template <typename PkgHeaderType>
+    PkgHeaderType* GetPkgHeader() const;
+
+    template <typename PkgHeaderType>
+    PkgEntryHeader_t* GetEntriesHeader() const;
 
 private:
-    bool m_bIsTfoPkg;
-
-    std::string_view m_szvFilename;
+    std::string m_szFilename;
     std::string m_szHashedEntryKey;
-    std::string_view m_szvDataKey;
+    std::string m_szDataKey;
+
+    std::string m_szMd5Hash;
 
     gsl::span<uint8_t> m_FileDataView;
 
     std::vector<std::unique_ptr<PkgEntry>> m_Entries;
+
+    bool m_bIsTfoPkg;
 };
 }  // namespace uc2
