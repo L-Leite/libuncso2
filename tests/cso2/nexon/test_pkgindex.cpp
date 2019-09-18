@@ -28,8 +28,9 @@ TEST_CASE("Pkg index file can be decrypted and parsed", "[pkgindex]")
             {
                 auto pPkgIndex = uc2::PkgIndex::Create(
                     cso2::IndexRealFilenames[i], vIndexBuffer,
-                    cso2::IndexKeyCollections[i]);
+                    &cso2::IndexKeyCollections[i]);
 
+                pPkgIndex->ValidateHeader();
                 uint64_t iNewSize = pPkgIndex->Parse();
 
                 vIndexBuffer.resize(iNewSize);
@@ -63,6 +64,9 @@ TEST_CASE("Pkg index file can be decrypted and parsed with C bindings",
                 cso2::IndexRealFilenames[i].data(), vIndexBuffer.data(),
                 vIndexBuffer.size(), &cso2::IndexKeyCollections[i]);
             REQUIRE(pIndex != NULL);
+
+            bool bHeaderRead = uncso2_PkgIndex_ValidateHeader(pIndex);
+            REQUIRE(bHeaderRead == true);
 
             bool bParsed = uncso2_PkgIndex_Parse(pIndex);
             REQUIRE(bParsed == true);

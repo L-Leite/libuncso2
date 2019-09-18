@@ -32,6 +32,40 @@ extern "C"
         delete pIndex;
     }
 
+    void UNCSO2_CALLMETHOD uncso2_PkgIndex_SetKeyCollection(
+        PkgIndex_t indexHandle, const uint8_t (*keyCollection)[4][16])
+    {
+        if (indexHandle == NULL)
+        {
+            return;
+        }
+
+        auto pIndex = reinterpret_cast<uc2::PkgIndex*>(indexHandle);
+
+        pIndex->SetKeyCollection(keyCollection);
+    }
+
+    bool UNCSO2_CALLMETHOD
+    uncso2_PkgIndex_ValidateHeader(PkgIndex_t indexHandle)
+    {
+        if (indexHandle == NULL)
+        {
+            return false;
+        }
+
+        auto pIndex = reinterpret_cast<uc2::PkgIndex*>(indexHandle);
+
+        try
+        {
+            pIndex->ValidateHeader();
+            return true;
+        }
+        catch (const std::exception& e)
+        {
+            return false;
+        }
+    }
+
     bool UNCSO2_CALLMETHOD uncso2_PkgIndex_Parse(PkgIndex_t indexHandle)
     {
         if (indexHandle == NULL)

@@ -24,8 +24,9 @@ TEST_CASE("TFO Pkg index file can be decrypted and parsed", "[pkgindex]")
         try
         {
             auto pPkgIndex = uc2::PkgIndex::Create(
-                tfo::IndexRealFilename, vIndexBuffer, tfo::IndexKeyCollection);
+                tfo::IndexRealFilename, vIndexBuffer, &tfo::IndexKeyCollection);
 
+            pPkgIndex->ValidateHeader();
             uint64_t iNewSize = pPkgIndex->Parse();
 
             vIndexBuffer.resize(iNewSize);
@@ -54,6 +55,9 @@ TEST_CASE("TFO Pkg index file can be decrypted and parsed with C bindings",
             tfo::IndexRealFilename.data(), vIndexBuffer.data(),
             vIndexBuffer.size(), &tfo::IndexKeyCollection);
         REQUIRE(pIndex != NULL);
+
+        bool bHeaderRead = uncso2_PkgIndex_ValidateHeader(pIndex);
+        REQUIRE(bHeaderRead == true);
 
         bool bParsed = uncso2_PkgIndex_Parse(pIndex);
         REQUIRE(bParsed == true);

@@ -26,9 +26,9 @@ extern "C"
      * @param dataBuffer A pointer to the index's data.
      * @param dataSize The index's data size.
      * @param keyCollection The key collection to decrypt with. It must have 4
-     * keys, and each key must be 16 bytes long-
+     * keys, and each key must be 16 bytes long.
      *
-     * @return PkgIndex_t uncso2_PkgIndex_Create
+     * @return PkgIndex_t A handle to the new PkgIndex object.
      */
     UNCSO2_API PkgIndex_t UNCSO2_CALLMETHOD uncso2_PkgIndex_Create(
         const char* filename, void* dataBuffer, uint64_t dataSize,
@@ -43,6 +43,29 @@ extern "C"
      */
     UNCSO2_API void UNCSO2_CALLMETHOD
     uncso2_PkgIndex_Free(PkgIndex_t indexHandle);
+
+    /**
+     * @brief Set the key collection to be used with the index file.
+     *
+     * @param indexHandle The PkgIndex's object handle.
+     * @param keyCollection The new key collection to decrypt with. It must have
+     * 4 keys, and each key must be 16 bytes long.
+     */
+    UNCSO2_API void UNCSO2_CALLMETHOD uncso2_PkgIndex_SetKeyCollection(
+        PkgIndex_t indexHandle, const uint8_t (*keyCollection)[4][16]);
+
+    /**
+     * @brief Checks if the index's header is valid.
+     *
+     * This method must be called before Parse.
+     *
+     * @param indexHandle The PkgIndex's object handle.
+     *
+     * @return true If the index's header was read successfully.
+     * @return false If there was an error reading the header.
+     */
+    UNCSO2_API bool UNCSO2_CALLMETHOD
+    uncso2_PkgIndex_ValidateHeader(PkgIndex_t indexHandle);
 
     /**
      * @brief Decrypts and parses index files.
