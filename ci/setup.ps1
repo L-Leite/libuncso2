@@ -13,21 +13,21 @@ if ($isLinux) {
     $isLinuxClangBuild = $curBuildCombo -eq 'linux-gcc'
 
     # install ninja through apt
-    sudo apt install ninja
+    apt install ninja
 
     if ($isGccBuild) {        
         # retrieve latest gcc
-        sudo add-apt-repository ppa:ubuntu-toolchain-r/test
-        sudo apt update
-        sudo apt install gcc-9
+        add-apt-repository ppa:ubuntu-toolchain-r/test
+        apt update
+        apt install gcc-9
 
         gcc-9 -v
     }
     elseif ($isLinuxClangBuild) {
         # retrieve clang 8
-        sudo add-apt-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-8 main"
-        sudo apt update
-        sudo apt install clang-8 lldb-8 lld-8 libc++-8-dev libc++abi-8-dev
+        add-apt-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-8 main"
+        apt update
+        apt install clang-8 lldb-8 lld-8 libc++-8-dev libc++abi-8-dev
 
         clang-8 -v
     }
