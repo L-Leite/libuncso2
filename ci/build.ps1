@@ -45,7 +45,23 @@ cmake -G "Ninja" `
     -DCMAKE_C_COMPILER="$targetCompilerCC" `
     ../
 
+if ($LASTEXITCODE -ne 0) {
+    Write-Error '#'
+    Write-Error '# BUILD ERROR'
+    Write-Error '# Failed to generate CMake configuration files.'
+    Write-Error '#'
+    exit 1
+}
+
 ninja all
+
+if ($LASTEXITCODE -ne 0) {
+    Write-Error '#'
+    Write-Error '# BUILD ERROR'
+    Write-Error '# Failed to build project.'
+    Write-Error '#'
+    exit 1
+}
 
 # go back to the project's dir
 Set-Location ../
