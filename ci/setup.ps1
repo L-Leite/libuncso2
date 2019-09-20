@@ -20,31 +20,29 @@ function SetupVsToolsPath {
 function PrintToolsVersion {
     param ([string]$curBuildCombo)
 
-    Write-Debug ''
-    Write-Debug '#'
-    Write-Debug '# TOOLS VERSIONS'
-    Write-Debug '#'
-    Write-Debug ''
+    Write-Host '#'
+    Write-Host '# TOOLS VERSIONS'
+    Write-Host '#'
 
     switch ($curBuildCombo) {
         "linux-gcc" {
-            Write-Debug '# GCC'
+            Write-Host '# GCC'
             gcc-9 -v
         }
         "linux-clang" {
-            Write-Debug '# Clang - GCC/Linux'
+            Write-Host '# Clang - GCC/Linux'
             clang -v
         }
         "windows-mingw" {
-            Write-Debug '# MinGW'
+            Write-Host '# MinGW'
             C:\msys64\mingw64\bin\gcc.exe -v
         }
         "windows-msvc" {
-            Write-Debug '# MSVC'
+            Write-Host '# MSVC'
             cl
         }
         "windows-clang" {
-            Write-Debug '# Clang - Windows'
+            Write-Host '# Clang - Windows'
             clang-cl -v
         }
         Default {
@@ -53,23 +51,18 @@ function PrintToolsVersion {
         }
     }
     
-    Write-Debug '# CMake'
+    Write-Host '# CMake'
     cmake --version
-    Write-Debug ''
 
-    Write-Debug '# Ninja'
+    Write-Host '# Ninja'
     ninja --version
-    Write-Debug ''
 
-    Write-Debug '# Git'
+    Write-Host '# Git'
     git --version
-    Write-Debug ''
 
-    Write-Debug ''
-    Write-Debug '#'
-    Write-Debug '# END OF TOOLS VERSIONS'
-    Write-Debug '#'
-    Write-Debug ''
+    Write-Host '#'
+    Write-Host '# END OF TOOLS VERSIONS'
+    Write-Host '#'
 }
 
 $curBuildCombo = $env:BUILD_COMBO
@@ -81,7 +74,7 @@ $isMsvcBuild = $curBuildCombo -eq 'windows-msvc'
 $isWinClangBuild = $curBuildCombo -eq 'windows-clang'
 
 Write-Host 'Running setup script...'
-Write-Debug 'Current setup build combo is: $curBuildCombo'
+Write-Host 'Current setup build combo is: $curBuildCombo'
 
 if ($isLinux) {
     # install ninja through apt

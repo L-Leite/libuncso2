@@ -1,7 +1,7 @@
 $curBuildCombo = $env:BUILD_COMBO
 
 Write-Host 'Running build script...'
-Write-Debug 'Current script build combo is: $curBuildCombo'
+Write-Host 'Current script build combo is: $curBuildCombo'
 
 $targetCompilerCC;
 $targetCompilerCXX;
@@ -34,8 +34,8 @@ switch ($curBuildCombo) {
     }
 }
 
-Write-Debug 'Selected C compiler: $targetCompilerCC'
-Write-Debug 'Selected C++ compiler: $targetCompilerCXX'
+Write-Host 'Selected C compiler: $targetCompilerCC'
+Write-Host 'Selected C++ compiler: $targetCompilerCXX'
 
 # go to build dir
 Push-Location ./build
