@@ -16,8 +16,8 @@ switch ($curBuildCombo) {
         $targetCompilerCXX = 'clang++-8'
     }
     "windows-mingw" {
-        $targetCompilerCC = 'C:\msys64\mingw64\bin\gcc.exe'
-        $targetCompilerCXX = 'C:\msys64\mingw64\bin\g++.exe'
+        $targetCompilerCC = 'C:\\msys64\\mingw64\\bin\\gcc.exe'
+        $targetCompilerCXX = 'C:\\msys64\\mingw64\\bin\\g++.exe'
     }
     "windows-msvc" {
         $targetCompilerCC = 'cl'
