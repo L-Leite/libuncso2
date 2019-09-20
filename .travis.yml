@@ -1,9 +1,0 @@
-language: cpp
-matrix:
-  include:
-    - os: linux
-      compiler: gcc
-      script: cmake -G Ninja ./build; ./build/tests/pkg_test
-    - os: linux
-      compiler: clang
-      script: cmake -G Ninja -DPKG_USE_CLANG_FSAPI=TRUE ./build; ./build/tests/pkg_test
