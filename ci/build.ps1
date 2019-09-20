@@ -1,7 +1,8 @@
 $curBuildCombo = $env:BUILD_COMBO
+$curConfig = $env:CONFIGURATION
 
 Write-Host 'Running build script...'
-Write-Host 'Current script build combo is: $curBuildCombo'
+Write-Host 'Current script build combo is: $curBuildCombo $curConfig'
 
 $targetCompilerCC;
 $targetCompilerCXX;
@@ -42,6 +43,7 @@ Push-Location ./build
 cmake -G "Ninja" `
     -DCMAKE_CXX_COMPILER="$targetCompilerCXX" `
     -DCMAKE_C_COMPILER="$targetCompilerCC" `
+    -DCMAKE_BUILD_TYPE="$curConfig" `
     ../
 
 if ($LASTEXITCODE -ne 0) {
