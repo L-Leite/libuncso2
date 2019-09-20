@@ -20,9 +20,8 @@ switch ($curBuildCombo) {
         $targetCompilerCXX = 'C:\msys64\mingw64\bin\g++.exe'
     }
     "windows-msvc" {
-        # the null strings should set msvc as the default compiler
-        $targetCompilerCC = ''
-        $targetCompilerCXX = ''
+        $targetCompilerCC = 'cl'
+        $targetCompilerCXX = 'cl'
     }
     "windows-clang" {
         $targetCompilerCC = 'clang-cl'
