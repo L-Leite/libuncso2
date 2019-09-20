@@ -77,8 +77,8 @@ $isLinuxClangBuild = $curBuildCombo -eq 'linux-clang'
 $isMsvcBuild = $curBuildCombo -eq 'windows-msvc'
 $isWinClangBuild = $curBuildCombo -eq 'windows-clang'
 
-Write-Host 'Running setup script...'
-Write-Host 'Current setup build combo is: $curBuildCombo'
+Write-Host "Running setup script..."
+Write-Host "Current setup build combo is: $curBuildCombo"
 
 if ($isLinux) {
     # install ninja through apt
