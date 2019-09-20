@@ -38,7 +38,7 @@ Write-Debug 'Selected C compiler: $targetCompilerCC'
 Write-Debug 'Selected C++ compiler: $targetCompilerCXX'
 
 # go to build dir
-Set-Location ./build
+Push-Location ./build
 
 cmake -G "Ninja" `
     -DCMAKE_CXX_COMPILER="$targetCompilerCXX" `
@@ -64,4 +64,4 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 # go back to the project's dir
-Set-Location ../
+Pop-Location
