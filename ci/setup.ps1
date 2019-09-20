@@ -3,6 +3,20 @@ function CreateDirectory {
     New-Item -ItemType Directory -Path $newDirectory
 }
 
+function SetupVsToolsPath {
+    # from https://allen-mack.blogspot.com/2008/03/replace-visual-studio-command-prompt.html
+    Push-Location 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build'
+
+    cmd /c "vcvars64.bat&set" |
+    ForEach-Object {
+        if ($_ -match "=") {
+            $v = $_.split("="); set-item -force -path "ENV:\$($v[0])"  -value "$($v[1])"
+        }
+    }
+
+    Pop-Location
+}
+
 function PrintToolsVersion {
     param ([string]$curBuildCombo)
 
@@ -95,7 +109,7 @@ elseif ($isWindows) {
 
     if ($isMsvcBuild -or $isWinClangBuild) {
         # add msvc 17 tools to path
-        "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat x86_amd64"
+        SetupVsToolsPath
     }
 }
 else {
