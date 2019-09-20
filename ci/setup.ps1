@@ -82,7 +82,7 @@ Write-Host 'Current setup build combo is: $curBuildCombo'
 
 if ($isLinux) {
     # install ninja through apt
-    sudo apt install ninja
+    sudo apt install ninja-build
 
     if ($isLinuxClangBuild) {
         # retrieve clang 8
