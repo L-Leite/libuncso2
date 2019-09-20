@@ -78,13 +78,13 @@ Write-Host 'Current setup build combo is: $curBuildCombo'
 
 if ($isLinux) {
     # install ninja through apt
-    apt install ninja
+    sudo apt install ninja
 
     if ($isLinuxClangBuild) {
         # retrieve clang 8
         add-apt-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-8 main"
-        apt update
-        apt install clang-8 lldb-8 lld-8 libc++-8-dev libc++abi-8-dev
+        sudo apt update
+        sudo apt install clang-8 lldb-8 lld-8 libc++-8-dev libc++abi-8-dev
     }
 }
 elseif ($isWindows) {
