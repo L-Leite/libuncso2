@@ -33,10 +33,10 @@ configuration:
   - Release
 
 install:
-  - ps: ./tests/setup.ps1
+  - ps: ./ci/setup.ps1
 
 build_script:
-  - ps: ./tests/build.ps1
+  - ps: ./ci/build.ps1
 
 test_script:
-  - ps: ./tests/test.ps1
+  - ps: ./ci/test.ps1
