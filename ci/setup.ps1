@@ -71,5 +71,4 @@ ninja -v
 git submodule update --init --recursive
 
 # create build dir
-CreateDirectory build
-Set-Location ./build
+CreateDirectory ./build

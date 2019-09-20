@@ -37,9 +37,15 @@ switch ($curBuildCombo) {
 Write-Debug 'Selected C compiler: $targetCompilerCC'
 Write-Debug 'Selected C++ compiler: $targetCompilerCXX'
 
+# go to build dir
+Set-Location ./build
+
 cmake -G "Ninja" `
     -DCMAKE_CXX_COMPILER="$targetCompilerCXX" `
     -DCMAKE_C_COMPILER="$targetCompilerCC" `
     ../
 
 ninja all
+
+# go back to the project's dir
+Set-Location ../
