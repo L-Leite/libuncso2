@@ -13,23 +13,23 @@ if ($isLinux) {
     $isLinuxClangBuild = $curBuildCombo -eq 'linux-gcc'
 
     # install ninja through apt
-    & 'sudo apt install ninja'
+    sudo apt install ninja
 
     if ($isGccBuild) {        
         # retrieve latest gcc
-        & 'sudo add-apt-repository ppa:ubuntu-toolchain-r/test'
-        & 'sudo apt update'
-        & 'sudo apt install gcc-9'
+        sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+        sudo apt update
+        sudo apt install gcc-9
 
-        & 'gcc-9 -v'
+        gcc-9 -v
     }
     elseif ($isLinuxClangBuild) {
         # retrieve clang 8
-        & 'sudo add-apt-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-8 main"'
-        & 'sudo apt update'
-        & 'sudo apt install clang-8 lldb-8 lld-8 libc++-8-dev libc++abi-8-dev'
+        sudo add-apt-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-8 main"
+        sudo apt update
+        sudo apt install clang-8 lldb-8 lld-8 libc++-8-dev libc++abi-8-dev
 
-        & 'clang-8 -v'
+        clang-8 -v
     }
 }
 elseif ($isWindows) {
@@ -41,21 +41,21 @@ elseif ($isWindows) {
     Invoke-WebRequest -useb get.scoop.sh | Invoke-Expression
 
     # install ninja through scoop
-    & 'scoop install ninja'
+    scoop install ninja
 
     if ($isMsvcBuild -or $isWinClangBuild) {
         # add msvc 17 tools to path
-        & 'C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat' x86_amd64
+        "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat x86_amd64"
     }
 
     if ($isMsvcBuild) {
-        #& ''
+        cl
     }
     elseif ($isWinClangBuild) {
-        & 'clang-cl -v'
+        clang-cl -v
     }
     elseif ($isMingwBuild) {
-        & 'gcc -v'
+        gcc -v
     }
 }
 else {
@@ -64,11 +64,11 @@ else {
 }
 
 # print tools versions
-& 'cmake -v'
-& 'ninja -v'
+cmake -v
+ninja -v
 
 # setup submodules
-& 'git submodule update --init --recursive'
+git submodule update --init --recursive
 
 # create build dir
 CreateDirectory build

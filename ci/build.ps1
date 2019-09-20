@@ -37,9 +37,9 @@ switch ($curBuildCombo) {
 Write-Debug 'Selected C compiler: $targetCompilerCC'
 Write-Debug 'Selected C++ compiler: $targetCompilerCXX'
 
-& 'cmake -G "Ninja" `
+cmake -G "Ninja" `
     -DCMAKE_CXX_COMPILER="$targetCompilerCXX" `
     -DCMAKE_C_COMPILER="$targetCompilerCC" `
-    ../'
+    ../
 
-& 'ninja all'
+ninja all
