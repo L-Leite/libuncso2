@@ -74,7 +74,7 @@ function PrintToolsVersion {
 
 $curBuildCombo = $env:BUILD_COMBO
 
-$isGccBuild = $curBuildCombo -eq 'linux-gcc'
+#$isGccBuild = $curBuildCombo -eq 'linux-gcc' # unused
 $isLinuxClangBuild = $curBuildCombo -eq 'linux-clang'
 # $isMingwBuild = $curBuildCombo -eq 'windows-mingw' # unused
 $isMsvcBuild = $curBuildCombo -eq 'windows-msvc'
@@ -87,13 +87,7 @@ if ($isLinux) {
     # install ninja through apt
     apt install ninja
 
-    if ($isGccBuild) {        
-        # retrieve latest gcc
-        add-apt-repository ppa:ubuntu-toolchain-r/test
-        apt update
-        apt install gcc-9
-    }
-    elseif ($isLinuxClangBuild) {
+    if ($isLinuxClangBuild) {
         # retrieve clang 8
         add-apt-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-8 main"
         apt update
