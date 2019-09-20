@@ -45,20 +45,14 @@ cmake -G "Ninja" `
     ../
 
 if ($LASTEXITCODE -ne 0) {
-    Write-Error '#'
-    Write-Error '# BUILD ERROR'
-    Write-Error '# Failed to generate CMake configuration files.'
-    Write-Error '#'
+    Write-Error 'Failed to generate CMake configuration files.'
     exit 1
 }
 
 ninja all
 
 if ($LASTEXITCODE -ne 0) {
-    Write-Error '#'
-    Write-Error '# BUILD ERROR'
-    Write-Error '# Failed to build project.'
-    Write-Error '#'
+    Write-Error 'Failed to build project.'
     exit 1
 }
 

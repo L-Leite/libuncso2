@@ -26,22 +26,26 @@ function PrintToolsVersion {
 
     switch ($curBuildCombo) {
         "linux-gcc" {
+            which gcc-9
             Write-Host '# GCC'
             gcc-9 -v
         }
         "linux-clang" {
+            which clang-8
             Write-Host '# Clang - GCC/Linux'
-            clang -v
+            clang-8 -v
         }
         "windows-mingw" {
             Write-Host '# MinGW'
             C:\msys64\mingw64\bin\gcc.exe -v
         }
         "windows-msvc" {
+            which cl
             Write-Host '# MSVC'
             cl
         }
         "windows-clang" {
+            which clang-cl
             Write-Host '# Clang - Windows'
             clang-cl -v
         }
