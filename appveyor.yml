@@ -14,30 +14,29 @@ environment:
     - BUILD_COMBO: windows-msvc
     - BUILD_COMBO: windows-clang
 
-for:
--
-  matrix:
-    only:
-      - image: Ubuntu
-        BUILD_COMBO: linux-gcc
-      - image: Ubuntu
-        BUILD_COMBO: linux-clang
-      - image: Visual Studio 2017
-        BUILD_COMBO: windows-mingw
-      - image: Visual Studio 2017
-        BUILD_COMBO: windows-msvc
-      - image: Visual Studio 2017
-        BUILD_COMBO: windows-clang
+matrix:
+  exclude:
+    - image: Ubuntu
+      BUILD_COMBO: windows-mingw
+    - image: Ubuntu
+      BUILD_COMBO: windows-msvc
+    - image: Ubuntu
+      BUILD_COMBO: windows-clang
+    - image: Visual Studio 2017
+      BUILD_COMBO: linux-gcc
+    - image: Visual Studio 2017
+      BUILD_COMBO: linux-clang
+
 
 configuration:
   - Debug
   - Release
 
 install:
-  - ps: ./setup.ps1
+  - ps: ./tests/setup.ps1
 
 build_script:
-  - ps: ./build.ps1
+  - ps: ./tests/build.ps1
 
 test_script:
-  - ps: ./test.ps1
+  - ps: ./tests/test.ps1
