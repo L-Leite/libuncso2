@@ -1,0 +1,43 @@
+version: 1.0.{build}
+pull_requests:
+  do_not_increment_build_number: true 
+
+image:
+  - Ubuntu
+  - Visual Studio 2017
+
+environment:
+  matrix:
+    - BUILD_COMBO: linux-gcc    
+    - BUILD_COMBO: linux-clang
+    - BUILD_COMBO: windows-mingw
+    - BUILD_COMBO: windows-msvc
+    - BUILD_COMBO: windows-clang
+
+for:
+-
+  matrix:
+    only:
+      - image: Ubuntu
+        BUILD_COMBO: linux-gcc
+      - image: Ubuntu
+        BUILD_COMBO: linux-clang
+      - image: Visual Studio 2017
+        BUILD_COMBO: windows-mingw
+      - image: Visual Studio 2017
+        BUILD_COMBO: windows-msvc
+      - image: Visual Studio 2017
+        BUILD_COMBO: windows-clang
+
+configuration:
+  - Debug
+  - Release
+
+install:
+  - ps: ./setup.ps1
+
+build_script:
+  - ps: ./build.ps1
+
+test_script:
+  - ps: ./test.ps1
