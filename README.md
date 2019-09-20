@@ -22,7 +22,7 @@ Tested on:
 
 ## Build status
 
-[![Build Status](https://travis-ci.org/Ochii/libuncso2.svg?branch=master)](https://travis-ci.org/Ochii/libuncso2)
+[![Build status](https://ci.appveyor.com/api/projects/status/oygibb8s9c3xxdba/branch/master?svg=true)](https://ci.appveyor.com/project/Ochii/libuncso2/branch/master)
 
 ## Examples
 
