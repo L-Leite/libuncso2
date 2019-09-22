@@ -51,9 +51,9 @@ configure_file("${PKG_LIB_CRYPTOPP_CMAKE_DIR}/cryptopp-config.cmake"
 set(BUILD_TESTING FALSE CACHE BOOL "" FORCE)
 
 # Only build Crypto++ either static or shared libraries
-if(NOT WIN32)
+if(NOT MSVC)
   if(PKG_DEPS_AS_SHARED_LIBS)
-    set(BUILD_STATIC FALSE CACHE BOOL "" FORCE)
+    # set(BUILD_STATIC FALSE CACHE BOOL "" FORCE)
   else()
     set(BUILD_SHARED FALSE CACHE BOOL "" FORCE)
   endif()
@@ -184,12 +184,14 @@ target_include_directories(uncso2
 #
 
 if(PKG_USE_CLANG_FSAPI)
+  message(STATUS "libuncso2: Using libc++fs")
   target_link_libraries(uncso2 c++fs)
-elseif(NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+elseif(NOT MSVC)
+  message(STATUS "libuncso2: Using stdlibc++fs")
   target_link_libraries(uncso2 stdc++fs)
 endif()
 
-if(NOT WIN32)
+if(NOT MSVC)
   if(PKG_DEPS_AS_SHARED_LIBS)
     target_link_libraries(uncso2 cryptopp-shared)
   else()
