@@ -1,3 +1,8 @@
+function CreateDirectory {
+    param( [string]$newDirectory)
+    New-Item -ItemType Directory -Path $newDirectory
+}
+
 function SetupVsToolsPath {
     # from https://allen-mack.blogspot.com/2008/03/replace-visual-studio-command-prompt.html
 

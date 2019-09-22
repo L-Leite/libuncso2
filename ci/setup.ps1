@@ -1,8 +1,3 @@
-function CreateDirectory {
-    param( [string]$newDirectory)
-    New-Item -ItemType Directory -Path $newDirectory
-}
-
 function PrintToolsVersion {
     param ([string]$curBuildCombo)
 
