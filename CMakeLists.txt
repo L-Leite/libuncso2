@@ -4,17 +4,18 @@ project(LibPkg LANGUAGES CXX)
 
 # are we being built as a dependency?
 set(PKG_IS_STANDALONE OFF)
-if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-    message("libuncso2: Building ourselves as a standalone project")
-    set(PKG_IS_STANDALONE ON)
-endif ()
+if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+  message("libuncso2: Building ourselves as a standalone project")
+  set(PKG_IS_STANDALONE ON)
+endif()
 
 #
 # User optinos
 #
 option(PKG_BUILD_SHARED "Build libuncso2 as a shared library" ON)
 option(PKG_BUILD_TESTS "Build tests" ${PKG_IS_STANDALONE})
-option(PKG_DEPS_AS_SHARED_LIBS "Build libuncso2 dependencies as shared libraries" ON)
+option(PKG_DEPS_AS_SHARED_LIBS
+       "Build libuncso2 dependencies as shared libraries" ON)
 option(PKG_USE_CLANG_FSAPI "Use libc++fs when available" OFF)
 
 #
@@ -37,22 +38,24 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 #
 
 # Setup Crypto++'s CMake files
-configure_file("${PKG_LIB_CRYPTOPP_CMAKE_DIR}/CMakeLists.txt" "${PKG_LIB_CRYPTOPP_DIR}/" COPYONLY)
-configure_file("${PKG_LIB_CRYPTOPP_CMAKE_DIR}/cryptopp-config.cmake" "${PKG_LIB_CRYPTOPP_DIR}/" COPYONLY)
+configure_file("${PKG_LIB_CRYPTOPP_CMAKE_DIR}/CMakeLists.txt"
+               "${PKG_LIB_CRYPTOPP_DIR}/" COPYONLY)
+configure_file("${PKG_LIB_CRYPTOPP_CMAKE_DIR}/cryptopp-config.cmake"
+               "${PKG_LIB_CRYPTOPP_DIR}/" COPYONLY)
 
 # Disable Crypto++ testing
-set(BUILD_TESTING FALSE CACHE BOOL "" FORCE)
+set(BUILD_TESTING FALSE)
 
 # Only build Crypto++ either static or shared libraries
 if(NOT WIN32)
-    if(PKG_DEPS_AS_SHARED_LIBS)
-        set(BUILD_STATIC FALSE)
-    else()
-        set(BUILD_SHARED FALSE)
-    endif()
-else()
-    # Don't build FIPS DLL 
+  if(PKG_DEPS_AS_SHARED_LIBS)
+    set(BUILD_STATIC FALSE)
+  else()
     set(BUILD_SHARED FALSE)
+  endif()
+else()
+  # Don't build FIPS DLL
+  set(BUILD_SHARED FALSE)
 endif()
 
 add_subdirectory("${PKG_LIB_CRYPTOPP_DIR}")
@@ -124,10 +127,11 @@ set(PKG_HEADERS_BASE
     "headers/lzmatextureimpl.hpp"
     "headers/util.hpp")
 
-file(GLOB PKG_ALL_SOURCES
-    ${PKG_SOURCES_BASE}
-    ${PKG_PUBLIC_HEADERS_BASE}
-    ${PKG_HEADERS_BASE})
+file(GLOB
+     PKG_ALL_SOURCES
+     ${PKG_SOURCES_BASE}
+     ${PKG_PUBLIC_HEADERS_BASE}
+     ${PKG_HEADERS_BASE})
 
 source_group("Source Files" FILES ${PKG_SOURCES_BASE})
 source_group("Public Header Files" FILES ${PKG_PUBLIC_HEADERS_BASE})
@@ -142,13 +146,13 @@ add_definitions(-DCMAKE_EXPORT_COMPILE_COMMANDS=ON)
 # Add library to build.
 #
 if(PKG_BUILD_SHARED)
-    message("libuncso2: Building ourselves as a shared library")
-    add_definitions(-DUNCSO2_EXPORT)
-    add_library(uncso2 SHARED ${PKG_ALL_SOURCES})
+  message("libuncso2: Building ourselves as a shared library")
+  add_definitions(-DUNCSO2_EXPORT)
+  add_library(uncso2 SHARED ${PKG_ALL_SOURCES})
 else()
-    message("libuncso2: Building ourselves as a static library")
-    add_definitions(-DUNCSO2_STATIC)
-    add_library(uncso2 STATIC ${PKG_ALL_SOURCES})
+  message("libuncso2: Building ourselves as a static library")
+  add_definitions(-DUNCSO2_STATIC)
+  add_library(uncso2 STATIC ${PKG_ALL_SOURCES})
 endif()
 
 #
@@ -166,29 +170,30 @@ endif()
 target_include_directories(uncso2 PRIVATE "headers")
 target_include_directories(uncso2 PRIVATE "${PKG_PUBLIC_HEADERS_DIR}")
 
-target_include_directories(uncso2 PRIVATE
-    "${LZMA_INCLUDE_DIR}"
-    "${CryptoPP_INCLUDE_DIRS}"
-    "${PKG_LIB_GSL_DIR}/include")
+target_include_directories(uncso2
+                           PRIVATE "${LZMA_INCLUDE_DIR}"
+                                   "${CryptoPP_INCLUDE_DIRS}"
+                                   "${PKG_LIB_GSL_DIR}/include")
 
 #
 # Setup library directories
 #
+
 if(PKG_USE_CLANG_FSAPI)
-    target_link_libraries(uncso2 c++fs)
+  target_link_libraries(uncso2 c++fs)
 elseif(NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-    target_link_libraries(uncso2 stdc++fs)
+  target_link_libraries(uncso2 stdc++fs)
 endif()
 
 if(NOT WIN32)
-    if(PKG_DEPS_AS_SHARED_LIBS)
-        target_link_libraries(uncso2 cryptopp-shared)
-    else()
-        target_link_libraries(uncso2 cryptopp-static)
-    endif()
-else()
-    # Don't use FIPS DLL
+  if(PKG_DEPS_AS_SHARED_LIBS)
+    target_link_libraries(uncso2 cryptopp-shared)
+  else()
     target_link_libraries(uncso2 cryptopp-static)
+  endif()
+else()
+  # Don't use FIPS DLL
+  target_link_libraries(uncso2 cryptopp-static)
 endif()
 
 target_link_libraries(uncso2 lzma)
@@ -196,16 +201,18 @@ target_link_libraries(uncso2 lzma)
 #
 # Set include directory for dependent projects
 #
-set(PKG_INCLUDE_DIR ${PKG_PUBLIC_HEADERS_ROOT_DIR}
+set(PKG_INCLUDE_DIR
+    ${PKG_PUBLIC_HEADERS_ROOT_DIR}
     CACHE INTERNAL "${PROJECT_NAME}: Include Directories" FORCE)
 
-set(PKG_LIBRARY ${PROJECT_NAME}
+set(PKG_LIBRARY
+    ${PROJECT_NAME}
     CACHE INTERNAL "${PROJECT_NAME}: Library Name" FORCE)
 
 #
 # Build tests (if the user wants to)
 #
 if(PKG_BUILD_TESTS)
-    message("libuncso2: Building tests")
-    add_subdirectory(tests)
+  message("libuncso2: Building tests")
+  add_subdirectory(tests)
 endif()
