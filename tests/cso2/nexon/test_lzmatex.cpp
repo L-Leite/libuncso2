@@ -65,20 +65,20 @@ TEST_CASE("Can decompress LZMA'd VTFs with C bindings", "[lzmavtf]")
 
         LzmaTexture_t pTexture =
             uncso2_LzmaTexture_Create(vTexBuffer.data(), vTexBuffer.size());
-        REQUIRE(pTexture != NULL);
+        REQUIRE(pTexture != nullptr);
 
         std::uint64_t iOrigSize = uncso2_LzmaTexture_GetOriginalSize(pTexture);
         REQUIRE(iOrigSize != 0);
 
-        void* pOutBuf = malloc(iOrigSize);
-        REQUIRE(pOutBuf != NULL);
+        std::uint8_t* pOutBuf = new std::uint8_t[iOrigSize];
+        REQUIRE(pOutBuf != nullptr);
 
         bool bWasDecompressed =
             uncso2_LzmaTexture_Decompress(pTexture, pOutBuf, iOrigSize);
 
         REQUIRE(bWasDecompressed == true);
-        REQUIRE(GetDataHash(reinterpret_cast<std::uint8_t*>(pOutBuf), iOrigSize) ==
-                cso2::TextureFileHash);
+        REQUIRE(GetDataHash(reinterpret_cast<std::uint8_t*>(pOutBuf),
+                            iOrigSize) == cso2::TextureFileHash);
 
         free(pOutBuf);
         uncso2_LzmaTexture_Free(pTexture);

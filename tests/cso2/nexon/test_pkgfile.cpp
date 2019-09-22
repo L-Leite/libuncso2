@@ -72,6 +72,8 @@ TEST_CASE("Pkg file partially decrypting an entry", "[pkgfile]")
                     cso2::PkgFilenames[i], vFileBuffer,
                     cso2::PackageEntryKeys[i], cso2::PackageFileKeys[i]);
 
+                REQUIRE(pPkgFile);
+
                 pPkgFile->DecryptHeader();
                 pPkgFile->Parse();
 
@@ -149,7 +151,7 @@ TEST_CASE("Pkg file can be decrypted and parsed using C bindings", "[pkgfile]")
                 cso2::PkgFilenames[i].data(), vFileBuffer.data(),
                 vFileBuffer.size(), cso2::PackageEntryKeys[i].data(),
                 cso2::PackageFileKeys[i].data());
-            REQUIRE(pPkg != NULL);
+            REQUIRE(pPkg != nullptr);
 
             bool bHeaderDecrypted = uncso2_PkgFile_DecryptHeader(pPkg);
             REQUIRE(bHeaderDecrypted == true);

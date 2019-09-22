@@ -137,14 +137,14 @@ TEST_CASE("TFO Pkg file can be decrypted and parsed using C bindings",
         REQUIRE(vFileBuffer.empty() == false);
 
         PkgFileOptions_t pOptions = uncso2_PkgFileOptions_Create();
-        REQUIRE(pOptions != NULL);
+        REQUIRE(pOptions != nullptr);
 
         uncso2_PkgFileOptions_SetTfoPkg(pOptions, true);
 
         PkgFile_t pPkg = uncso2_PkgFile_Create(
             tfo::PkgFilename.data(), vFileBuffer.data(), vFileBuffer.size(),
             tfo::PackageEntryKey.data(), tfo::PackageFileKey.data(), pOptions);
-        REQUIRE(pPkg != NULL);
+        REQUIRE(pPkg != nullptr);
 
         uncso2_PkgFileOptions_Free(pOptions);
 

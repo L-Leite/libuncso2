@@ -69,7 +69,7 @@ TEST_CASE("Can decrypt .e* files with C bindings", "[encfile]")
             EncryptedFile_t pFile = uncso2_EncryptedFile_Create(
                 cso2::RealEncryptedFileNames[i].data(), vFileBuffer.data(),
                 vFileBuffer.size(), &cso2::IndexKeyCollections[i]);
-            REQUIRE(pFile != NULL);
+            REQUIRE(pFile != nullptr);
 
             std::uint8_t* pOutBuf = nullptr;
             std::uint64_t iBufSize = 0;
