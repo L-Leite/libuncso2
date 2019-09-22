@@ -67,7 +67,7 @@ if ($isLinux) {
         # retrieve clang 8
         sudo add-apt-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-8 main"
         sudo apt update
-        sudo apt install clang-8 lldb-8 lld-8 libc++-8-dev libc++abi-8-dev
+        sudo apt install -y clang-8 lldb-8 lld-8 libc++-8-dev libc++abi-8-dev
     }
 }
 elseif ($isWindows) {
