@@ -110,6 +110,9 @@ else {
     exit 1
 }
 
+Write-Host '# Environment path:'
+Write-Host $env:PATH
+
 # print tools versions
 PrintToolsVersion $curBuildCombo
 
