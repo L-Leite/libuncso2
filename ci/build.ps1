@@ -24,6 +24,8 @@ function SetupVsToolsPath {
 $curBuildCombo = $env:BUILD_COMBO
 $curConfig = $env:CONFIGURATION
 
+$clangFsOption = 'DPKG_USE_CLANG_FSAPI=OFF';
+
 Write-Host "Running build script..."
 Write-Host "Current script build combo is: $curBuildCombo $curConfig"
 
@@ -39,6 +41,7 @@ switch ($curBuildCombo) {
     "linux-clang" {
         $targetCompilerCC = 'clang-8'
         $targetCompilerCXX = 'clang++-8'
+        $clangFsOption = 'DPKG_USE_CLANG_FSAPI=ON';
         break
     }
     "windows-mingw" {
@@ -72,6 +75,7 @@ cmake -G "Ninja" `
     -DCMAKE_CXX_COMPILER="$targetCompilerCXX" `
     -DCMAKE_C_COMPILER="$targetCompilerCC" `
     -DCMAKE_BUILD_TYPE="$curConfig" `
+    $clangFsOption `
     ../
 
 if ($LASTEXITCODE -ne 0) {
