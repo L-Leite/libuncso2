@@ -8,21 +8,21 @@ image:
 
 environment:
   matrix:
-    - BUILD_COMBO: linux-gcc    
-    - BUILD_COMBO: linux-clang
     - BUILD_COMBO: windows-mingw
     - BUILD_COMBO: windows-msvc
+    - BUILD_COMBO: linux-gcc    
+    - BUILD_COMBO: linux-clang
 
 matrix:
   exclude:
-    - image: Ubuntu
-      BUILD_COMBO: windows-mingw
-    - image: Ubuntu
-      BUILD_COMBO: windows-msvc
     - image: Visual Studio 2017
       BUILD_COMBO: linux-gcc
     - image: Visual Studio 2017
       BUILD_COMBO: linux-clang
+    - image: Ubuntu
+      BUILD_COMBO: windows-mingw
+    - image: Ubuntu
+      BUILD_COMBO: windows-msvc
 
 
 configuration:
