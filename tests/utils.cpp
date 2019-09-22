@@ -1,5 +1,6 @@
 #include "utils.hpp"
 
+#include <array>
 #include <fstream>
 
 #include <hex.h>
