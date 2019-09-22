@@ -29,12 +29,6 @@ function PrintToolsVersion {
             cl
             break
         }
-        "windows-clang" {
-            which clang-cl
-            Write-Host '# Clang - Windows'
-            clang-cl -v
-            break
-        }
         Default {
             Write-Error 'Unknown build combo used, could not find appropriate compiler.'
             exit 1
@@ -61,7 +55,6 @@ $curBuildCombo = $env:BUILD_COMBO
 $isLinuxClangBuild = $curBuildCombo -eq 'linux-clang'
 # $isMingwBuild = $curBuildCombo -eq 'windows-mingw' # unused
 #$isMsvcBuild = $curBuildCombo -eq 'windows-msvc'
-#$isWinClangBuild = $curBuildCombo -eq 'windows-clang'
 
 Write-Host "Running setup script..."
 Write-Host "Current setup build combo is: $curBuildCombo"

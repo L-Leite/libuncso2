@@ -12,7 +12,6 @@ environment:
     - BUILD_COMBO: linux-clang
     - BUILD_COMBO: windows-mingw
     - BUILD_COMBO: windows-msvc
-    - BUILD_COMBO: windows-clang
 
 matrix:
   exclude:
@@ -20,8 +19,6 @@ matrix:
       BUILD_COMBO: windows-mingw
     - image: Ubuntu
       BUILD_COMBO: windows-msvc
-    - image: Ubuntu
-      BUILD_COMBO: windows-clang
     - image: Visual Studio 2017
       BUILD_COMBO: linux-gcc
     - image: Visual Studio 2017

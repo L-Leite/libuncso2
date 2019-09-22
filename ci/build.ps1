@@ -53,13 +53,6 @@ switch ($curBuildCombo) {
         SetupVsToolsPath
         break
     }
-    "windows-clang" {
-        $targetCompilerCC = 'clang'
-        $targetCompilerCXX = 'clang'
-        # add msvc 17 tools to path
-        #SetupVsToolsPath
-        break
-    }
     Default {
         Write-Error 'Unknown build combo used, could not find appropriate compiler.'
         exit 1
