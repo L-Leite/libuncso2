@@ -97,7 +97,9 @@ elseif ($isWindows) {
 
     if ($isMingwBuild) {
         # put mingw tools in path
-        Add-Path 'C:\msys64\mingw64\bin'
+        $mingwAppendPath = ';C:\msys64\mingw64\bin'
+        $env:Path += $mingwAppendPath
+        [Environment]::SetEnvironmentVariable("Path", $env:Path + $mingwAppendPath, "Machine")
     }
 
     if ($isMsvcBuild) {     
@@ -110,7 +112,9 @@ else {
     exit 1
 }
 
+Write-Host '#'
 Write-Host '# Environment path:'
+Write-Host '#'
 Write-Host $env:PATH
 
 # print tools versions
