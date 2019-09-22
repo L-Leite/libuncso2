@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13.0)
 
-if (POLICY CMP0077)
-    cmake_policy(SET CMP0077 NEW)
+if(POLICY CMP0077)
+  cmake_policy(SET CMP0077 NEW)
 endif()
 
 project(LibPkg LANGUAGES CXX)
@@ -48,18 +48,18 @@ configure_file("${PKG_LIB_CRYPTOPP_CMAKE_DIR}/cryptopp-config.cmake"
                "${PKG_LIB_CRYPTOPP_DIR}/" COPYONLY)
 
 # Disable Crypto++ testing
-set(BUILD_TESTING FALSE)
+set(BUILD_TESTING FALSE CACHE BOOL "" FORCE)
 
 # Only build Crypto++ either static or shared libraries
 if(NOT WIN32)
   if(PKG_DEPS_AS_SHARED_LIBS)
-    set(BUILD_STATIC FALSE)
+    set(BUILD_STATIC FALSE CACHE BOOL "" FORCE)
   else()
-    set(BUILD_SHARED FALSE)
+    set(BUILD_SHARED FALSE CACHE BOOL "" FORCE)
   endif()
 else()
   # Don't build FIPS DLL
-  set(BUILD_SHARED FALSE)
+  set(BUILD_SHARED FALSE CACHE BOOL "" FORCE)
 endif()
 
 add_subdirectory("${PKG_LIB_CRYPTOPP_DIR}")
