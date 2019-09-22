@@ -1,3 +1,21 @@
+function SetupVsToolsPath {
+    # from https://allen-mack.blogspot.com/2008/03/replace-visual-studio-command-prompt.html
+
+    # split location to shorten the command
+    Push-Location 'C:\Program Files (x86)\Microsoft Visual Studio\2017'
+    Push-Location '.\Community\VC\Auxiliary\Build'
+
+    cmd /c "vcvars64.bat&set" |
+    ForEach-Object {
+        if ($_ -match "=") {
+            $v = $_.split("="); set-item -force -path "ENV:\$($v[0])"  -value "$($v[1])"
+        }
+    }
+
+    Pop-Location
+    Pop-Location
+}
+
 function PrintToolsVersion {
     param ([string]$curBuildCombo)
 
@@ -54,7 +72,7 @@ $curBuildCombo = $env:BUILD_COMBO
 #$isGccBuild = $curBuildCombo -eq 'linux-gcc' # unused
 $isLinuxClangBuild = $curBuildCombo -eq 'linux-clang'
 # $isMingwBuild = $curBuildCombo -eq 'windows-mingw' # unused
-#$isMsvcBuild = $curBuildCombo -eq 'windows-msvc'
+$isMsvcBuild = $curBuildCombo -eq 'windows-msvc'
 
 Write-Host "Running setup script..."
 Write-Host "Current setup build combo is: $curBuildCombo"
@@ -80,6 +98,11 @@ elseif ($isWindows) {
 else {
     Write-Error 'An unknown OS is running this script, implement me.'
     exit 1
+}
+
+# put VS tools in path to print their version
+if ($isMsvcBuild) { 
+    SetupVsToolsPath 
 }
 
 # print tools versions
