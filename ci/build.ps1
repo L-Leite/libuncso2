@@ -45,8 +45,8 @@ switch ($curBuildCombo) {
         break
     }
     "windows-mingw" {
-        $targetCompilerCC = 'C:/msys64/mingw64/bin/gcc.exe'
-        $targetCompilerCXX = 'C:/msys64/mingw64/bin/g++.exe'
+        $targetCompilerCC = 'gcc'
+        $targetCompilerCXX = 'g++'
         break
     }
     "windows-msvc" {
