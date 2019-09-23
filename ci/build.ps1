@@ -74,7 +74,7 @@ CreateDirectory ./build
 Push-Location ./build
 
 if ($isMsvcBuild) {
-    cmake -G "Visual Studio 15 2017" ../ 
+    cmake -G "Visual Studio 15 2017" -A "x64" ../ 
 }
 else {
     cmake -G "Ninja" `
