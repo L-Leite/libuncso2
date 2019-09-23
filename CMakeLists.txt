@@ -37,6 +37,10 @@ set(PKG_LIB_LZMA_DIR "${PKG_LIBS_DIR}/lzma")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+# Put all executables into the same top level build directory, regardless of
+# which subdirectory they are declared
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
 #
 # Dependencies
 #
