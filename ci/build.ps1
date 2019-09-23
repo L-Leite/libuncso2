@@ -24,6 +24,8 @@ function SetupVsToolsPath {
 $curBuildCombo = $env:BUILD_COMBO
 $curConfig = $env:CONFIGURATION
 
+$isMsvcBuild = $curBuildCombo -eq 'windows-msvc'
+
 $clangFsOption = 'DPKG_USE_CLANG_FSAPI=OFF';
 
 Write-Host "Running build script..."
@@ -71,19 +73,29 @@ CreateDirectory ./build
 # go to build dir
 Push-Location ./build
 
-cmake -G "Ninja" `
-    -DCMAKE_CXX_COMPILER="$targetCompilerCXX" `
-    -DCMAKE_C_COMPILER="$targetCompilerCC" `
-    -DCMAKE_BUILD_TYPE="$curConfig" `
-    $clangFsOption `
-    ../
+if ($isMsvcBuild) {
+    cmake -G "Visual Studio 15 2017" ../ 
+}
+else {
+    cmake -G "Ninja" `
+        -DCMAKE_CXX_COMPILER="$targetCompilerCXX" `
+        -DCMAKE_C_COMPILER="$targetCompilerCC" `
+        -DCMAKE_BUILD_TYPE="$curConfig" `
+        $clangFsOption `
+        ../
+}
 
 if ($LASTEXITCODE -ne 0) {
     Write-Error 'Failed to generate CMake configuration files.'
     exit 1
 }
 
-ninja all
+if ($isMsvcBuild) {
+    msbuild LibPkg.sln /p:Configuration=Release
+}
+else {
+    ninja all
+}
 
 if ($LASTEXITCODE -ne 0) {
     Write-Error 'Failed to build project.'
