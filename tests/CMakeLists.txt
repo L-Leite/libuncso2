@@ -49,7 +49,7 @@ target_link_libraries(pkg_test Catch2::Catch2)
 
 if(PKG_USE_CLANG_FSAPI)
   target_link_libraries(pkg_test c++abi c++fs)
-else()
+elseif(NOT MSVC)
   target_link_libraries(pkg_test stdc++fs)
 endif()
 
