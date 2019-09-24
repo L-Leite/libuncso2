@@ -55,9 +55,6 @@ endif()
 
 target_link_libraries(pkg_test uncso2)
 
-# set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fcf-protection=full
-# -mcet")
-
 #
 # Copy files required for the tests
 #
