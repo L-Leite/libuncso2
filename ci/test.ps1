@@ -1,7 +1,7 @@
 Write-Host 'Running test script...'
 
 # go to the test binary dir
-Set-Location ./build/tests    
+Push-Location ./build/tests    
 
 if ($isLinux) {
     ./pkg_test
@@ -14,5 +14,10 @@ else {
     exit 1
 }
 
+if ($LASTEXITCODE -ne 0) {
+    Write-Error 'One or more tests failed.'
+    exit 1
+}
+
 # go back to the project's dir
-Set-Location ../
+Pop-Location
