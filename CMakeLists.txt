@@ -160,6 +160,18 @@ else()
 endif()
 
 #
+# Put Visual Studio resulting binaries out of their config directory
+#
+if(MSVC)
+  foreach(CUR_CONFIG ${CMAKE_CONFIGURATION_TYPES})
+    string(TOUPPER ${CUR_CONFIG} CUR_CONFIG)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CUR_CONFIG} "${OUTPUT_DIRECTORY}")
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CUR_CONFIG} "${OUTPUT_DIRECTORY}")
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CUR_CONFIG} "${OUTPUT_DIRECTORY}")
+  endforeach()
+endif()
+
+#
 # Enable all warnings
 #
 if(MSVC)
