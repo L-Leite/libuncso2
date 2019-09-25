@@ -6,7 +6,7 @@ PKG is an encrypted archive file format used in Counter-Strike Online 2 and Tita
 
 It's based on the ekey's reversing work of at [XeNTaX's forums](https://forum.xentax.com/viewtopic.php?f=21&t=11117).
 
-Used as the back-end for the GUI program [UnCSO2](https://github.com/Ochii/UnCSO2).
+Used as the back-end for the GUI program [UnCSO2](https://github.com/L-Leite/UnCSO2).
 
 Tested on:
 - GNU/Linux - GCC 8.3.0 (32 and 64 bits)
@@ -22,7 +22,7 @@ Tested on:
 
 ## Build status
 
-[![Build status](https://ci.appveyor.com/api/projects/status/oygibb8s9c3xxdba/branch/master?svg=true)](https://ci.appveyor.com/project/Ochii/libuncso2/branch/master)
+[![Build status](https://ci.appveyor.com/api/projects/status/oygibb8s9c3xxdba/branch/master?svg=true)](https://ci.appveyor.com/project/L-Leite/libuncso2/branch/master)
 
 ## Examples
 
