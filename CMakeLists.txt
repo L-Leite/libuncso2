@@ -6,6 +6,19 @@ endif()
 
 project(LibPkg LANGUAGES CXX)
 
+#
+# Put Visual Studio resulting binaries out of their config directory
+#
+if(MSVC)
+  set(PKG_POSSIBLE_CONFIGS "Debug;Release;MinSizeRel;RelWithDebInfo")
+  foreach(CUR_CONFIG ${PKG_POSSIBLE_CONFIGS})
+    string(TOUPPER ${CUR_CONFIG} CUR_CONFIG)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CUR_CONFIG} "${OUTPUT_DIRECTORY}")
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CUR_CONFIG} "${OUTPUT_DIRECTORY}")
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CUR_CONFIG} "${OUTPUT_DIRECTORY}")
+  endforeach()
+endif()
+
 # are we being built as a dependency?
 set(PKG_IS_STANDALONE OFF)
 if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
@@ -159,17 +172,7 @@ else()
   add_library(uncso2 STATIC ${PKG_ALL_SOURCES})
 endif()
 
-#
-# Put Visual Studio resulting binaries out of their config directory
-#
-if(MSVC)
-  foreach(CUR_CONFIG ${CMAKE_CONFIGURATION_TYPES})
-    string(TOUPPER ${CUR_CONFIG} CUR_CONFIG)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CUR_CONFIG} "${OUTPUT_DIRECTORY}")
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CUR_CONFIG} "${OUTPUT_DIRECTORY}")
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CUR_CONFIG} "${OUTPUT_DIRECTORY}")
-  endforeach()
-endif()
+message(STATUS "CMAKE_CONFIGURATION_TYPES: ${CMAKE_CONFIGURATION_TYPES}")
 
 #
 # Enable all warnings
