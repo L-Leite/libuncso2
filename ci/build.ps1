@@ -91,7 +91,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 if ($isMsvcBuild) {
-    msbuild LibPkg.sln /p:Configuration=Release
+    msbuild LibPkg.sln "/p:Configuration=$curConfig"
 }
 else {
     ninja all
