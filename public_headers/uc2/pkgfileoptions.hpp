@@ -22,7 +22,7 @@ namespace uc2
  * @brief Options to use with PkgFile
  *
  */
-class PkgFileOptions
+class UNCSO2_API PkgFileOptions
 {
 public:
     using ptr_t = std::unique_ptr<PkgFileOptions>; /*!< The pointer type of
