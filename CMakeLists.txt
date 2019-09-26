@@ -35,6 +35,8 @@ option(PKG_DEPS_AS_SHARED_LIBS
        "Build libuncso2 dependencies as shared libraries" ON)
 option(PKG_USE_CLANG_FSAPI "Use libc++fs when available" OFF)
 
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake_modules")
+
 #
 # Global paths
 #
@@ -42,6 +44,7 @@ set(PKG_ROOT_DIR "${PROJECT_SOURCE_DIR}")
 set(PKG_LIBS_DIR "${PKG_ROOT_DIR}/external")
 set(PKG_PUBLIC_HEADERS_ROOT_DIR "${PKG_ROOT_DIR}/public_headers")
 set(PKG_PUBLIC_HEADERS_DIR "${PKG_PUBLIC_HEADERS_ROOT_DIR}/uc2")
+set(PKG_GENERATED_DIR "${CMAKE_BINARY_DIR}/generated")
 
 set(PKG_LIB_CRYPTOPP_DIR "${PKG_LIBS_DIR}/cryptopp")
 set(PKG_LIB_CRYPTOPP_CMAKE_DIR "${PKG_LIBS_DIR}/cryptopp-cmake")
@@ -49,6 +52,18 @@ set(PKG_LIB_GSL_DIR "${PKG_LIBS_DIR}/gsl-lite")
 set(PKG_LIB_LZMA_DIR "${PKG_LIBS_DIR}/lzma")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+set(PKG_VERSION_FILE "${PKG_ROOT_DIR}/version.txt")
+set(PKG_VERSION_TEMPLATE "${PKG_ROOT_DIR}/headers/lib_version.hpp.in")
+set(PKG_VERSION_OUT "${PKG_GENERATED_DIR}/lib_version.hpp")
+
+include(libuc2_version)
+generate_libuc2_version(VERSION_FILE
+                        ${PKG_VERSION_FILE}
+                        HEADER_TEMPLATE
+                        ${PKG_VERSION_TEMPLATE}
+                        HEADER_OUT
+                        ${PKG_VERSION_OUT})
 
 #
 # Dependencies
@@ -142,7 +157,8 @@ set(PKG_HEADERS_BASE
     "headers/keyhashes.hpp"
     "headers/lzmaDecoder.h"
     "headers/lzmatextureimpl.hpp"
-    "headers/util.hpp")
+    "headers/util.hpp"
+    ${PKG_VERSION_OUT})
 
 file(GLOB
      PKG_ALL_SOURCES
@@ -172,7 +188,7 @@ else()
   add_library(uncso2 STATIC ${PKG_ALL_SOURCES})
 endif()
 
-message(STATUS "CMAKE_CONFIGURATION_TYPES: ${CMAKE_CONFIGURATION_TYPES}")
+set_target_properties(uncso2 PROPERTIES VERSION ${LIB_VERSION})
 
 #
 # Enable all warnings
@@ -193,6 +209,9 @@ target_include_directories(uncso2
                            PRIVATE "${LZMA_INCLUDE_DIR}"
                                    "${CryptoPP_INCLUDE_DIRS}"
                                    "${PKG_LIB_GSL_DIR}/include")
+
+# the generated version header's directory
+target_include_directories(uncso2 PRIVATE ${PKG_GENERATED_DIR})
 
 #
 # Setup library directories

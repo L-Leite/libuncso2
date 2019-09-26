@@ -1,16 +1,11 @@
 #include "uc2version.hpp"
 
-#include <string>
+#include <string_view>
 
-using namespace std::string_view_literals;
+#include "lib_version.hpp"
 
 namespace uc2
 {
-constexpr const int MAJOR_VERSION = 1;
-constexpr const int MINOR_VERSION = 1;
-constexpr const int PATCH_VERSION = 1;
-constexpr const std::string_view VERSION_STRING = "1.1.1"sv;
-
 int Version::GetMajorVersionNum()
 {
     return MAJOR_VERSION;
