@@ -13,6 +13,9 @@ function(generate_libuc2_version)
                         ${ARGN})
 
   set(LIB_VERSION "0.0.0")
+  set(LIB_VERSION_MAJOR "0")
+  set(LIB_VERSION_MINOR "0")
+  set(LIB_VERSION_PATCH "0")
 
   if(EXISTS ${GEN_VERSION_FILE})
     file(READ ${GEN_VERSION_FILE} LIB_VERSION)
@@ -24,8 +27,6 @@ function(generate_libuc2_version)
       )
   endif()
 
-  set(LIB_VERSION ${LIB_VERSION} PARENT_SCOPE)
-
   string(REPLACE "."
                  ";"
                  VERSION_LIST
@@ -33,10 +34,11 @@ function(generate_libuc2_version)
   list(GET VERSION_LIST 0 LIB_VERSION_MAJOR)
   list(GET VERSION_LIST 1 LIB_VERSION_MINOR)
   list(GET VERSION_LIST 2 LIB_VERSION_PATCH)
-  set(LIB_VERSION ${LIB_VERSION_PATCH} LIB_VERSION_PATCH)
-  set(LIB_VERSION ${LIB_VERSION_PATCH} LIB_VERSION_PATCH)
-  set(LIB_VERSION ${LIB_VERSION_PATCH} LIB_VERSION_PATCH)
+
+  set(LIB_VERSION ${LIB_VERSION} PARENT_SCOPE)
+  set(LIB_VERSION_MAJOR ${LIB_VERSION_MAJOR} PARENT_SCOPE)
+  set(LIB_VERSION_MINOR ${LIB_VERSION_MINOR} PARENT_SCOPE)
+  set(LIB_VERSION_PATCH ${LIB_VERSION_PATCH} PARENT_SCOPE)
 
   configure_file(${GEN_HEADER_TEMPLATE} ${GEN_HEADER_OUT})
-
 endfunction()
