@@ -52,7 +52,7 @@ PkgFileImpl::PkgFileImpl(std::string szFilename,
                          PkgFileOptions* options /* = nullptr*/)
     : m_szFilename(szFilename),
       m_szHashedEntryKey(GeneratePkgFileKey(szFilename, szEntryKey)),
-      m_szDataKey(szDataKey), m_FileDataView(fileData)
+      m_szDataKey(szDataKey), m_FileDataView(fileData), m_bParsed(false)
 {
     this->Initialize(szEntryKey, options);
 }
@@ -63,7 +63,7 @@ PkgFileImpl::PkgFileImpl(std::string szFilename,
                          std::string szDataKey /*= {}*/,
                          PkgFileOptions* pOptions /* = nullptr*/)
     : m_szFilename(szFilename), m_szHashedEntryKey(), m_szDataKey(szDataKey),
-      m_FileDataView(fileData)
+      m_FileDataView(fileData), m_bParsed(false)
 {
     this->Initialize(szEntryKey, pOptions);
 }
@@ -229,6 +229,11 @@ bool PkgFileImpl::DecryptHeader()
 
 void PkgFileImpl::Parse()
 {
+    if (this->m_bParsed == true)
+    {
+        return;
+    }
+
     if (this->m_FileDataView.empty() == true)
     {
         throw std::runtime_error("The file data provided is empty.");
@@ -306,6 +311,8 @@ void PkgFileImpl::ParseEntries()
 
         this->m_Entries.push_back(std::move(pNewEntry));
     }
+
+    this->m_bParsed = true;
 }
 
 void PkgFileImpl::UpdateEntriesDataView()

@@ -83,5 +83,6 @@ private:
     std::vector<std::unique_ptr<PkgEntry>> m_Entries;
 
     bool m_bIsTfoPkg;
+    bool m_bParsed;
 };
 }  // namespace uc2
