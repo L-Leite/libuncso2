@@ -37,17 +37,30 @@ constexpr const std::uint8_t IndexKeyCollection[4][16] = {
 const std::string PackageEntryKey = "lkgui781kl789sd!@#%89&^sd"s;
 const std::string PackageFileKey = "^9gErg2Sx7bnk7@#sdfjnh@"s;
 
-const std::string PkgFilename = "0a4b4196394ecf251c532f1552ccf3b3.pkg"s;
-constexpr const std::uint64_t PackageFileCount = 4;
-const std::array<std::string, 4> PackageFileHashes = {
-    "42d3b7b74b8feb7f6801930ba58aef6bb85fa2d8a465cffef36c906566cbeeb4",
-    "58389be7fbcaa33e143c8e7ed85b7ed73e5d69d095972e9d260a4171ed959224",
-    "2968dce6245f50c7ae9803e1b765ff9ed7705a459c4041f4623a46dea24b9873",
-    "638f05cce5002f65917125931a07f2541b4fca6819623950f9c306bba18d9ae7",
+const std::vector<std::pair<std::string, std::vector<std::string>>> Packages = {
+    {
+        "0a4b4196394ecf251c532f1552ccf3b3.pkg",
+        {
+            "cab6520af0e54b17b46a9ae45611c339e64e50e06f341dd834464acc9689af15",
+            "31d262620204566d8c3f7bf40f637d6229c2b15b1dd5abee1f784d7b5fba6c97",
+            "c013887bc3e6e16e4ce84d6c674faea8e70e27b2b0d2864e534f78c88b2be270",
+            "c9173ac086723d08025380964c38e905a93116eb77ea7d6d3edb24e07bc81d4b",
+        }
+    },
+    {
+       "d0112b5fb371db812eb586c3d8d19f4f.pkg",
+        {
+            "c32759a871bc14ce2f84381a63dec7895b4376a9d69ef65421a770cae9ab34e4",
+            "5a2c571f3fec0c83075a97a7f6f8bc52864e9fc2c5576d9db77fd3d25c73950b",
+            "437510ea732d3d10befc8940cbb2e38777271fdb51e23c5354843f4625a4f99d",
+            "4355f6960122aac15ee3f069ab2da06783cf4e17a132fef6eac36309d3be0bc7",
+            "55562fbc475b77283260950ca5810571d27096bc5d5f89388e2736ce7dd21bb3",
+            "7c2ed35e2ce03c61e199fb7842759605b5443262d6319ce3e1cb71ce28e00bae",
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "443a3b4d621cbba7429118d82a001e513327d8831a76414e3b47052cdf2888a5",
+        }
+    },
 };
-
-const std::string PkgFilename2 = "d0112b5fb371db812eb586c3d8d19f4f.pkg"s;
-constexpr const std::uint64_t PackageFileCount2 = 8;
 
 //
 // PKG data END
