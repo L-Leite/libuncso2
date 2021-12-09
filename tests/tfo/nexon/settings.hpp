@@ -33,20 +33,22 @@ constexpr const std::uint8_t IndexKeyCollection[4][16] = {
 //
 // PKG data START
 //
-const std::string PkgFilename = "0a4b4196394ecf251c532f1552ccf3b3.pkg"s;
 
 const std::string PackageEntryKey = "lkgui781kl789sd!@#%89&^sd"s;
-
 const std::string PackageFileKey = "^9gErg2Sx7bnk7@#sdfjnh@"s;
 
+const std::string PkgFilename = "0a4b4196394ecf251c532f1552ccf3b3.pkg"s;
 constexpr const std::uint64_t PackageFileCount = 4;
-
 const std::array<std::string, 4> PackageFileHashes = {
     "42d3b7b74b8feb7f6801930ba58aef6bb85fa2d8a465cffef36c906566cbeeb4",
     "58389be7fbcaa33e143c8e7ed85b7ed73e5d69d095972e9d260a4171ed959224",
     "2968dce6245f50c7ae9803e1b765ff9ed7705a459c4041f4623a46dea24b9873",
     "638f05cce5002f65917125931a07f2541b4fca6819623950f9c306bba18d9ae7",
 };
+
+const std::string PkgFilename2 = "d0112b5fb371db812eb586c3d8d19f4f.pkg"s;
+constexpr const std::uint64_t PackageFileCount2 = 8;
+
 //
 // PKG data END
 //

@@ -124,6 +124,46 @@ TEST_CASE("TFO Pkg file partially decrypting an entry", "[pkgfile]")
             throw e;
         }
     }
+    SECTION("Can decrypt an 8 byte entry")
+    {
+        auto [bWasRead, vFileBuffer] = ReadFileToBuffer(tfo::PkgFilename2);
+
+        REQUIRE(bWasRead == true);
+        REQUIRE(vFileBuffer.empty() == false);
+
+        try
+        {
+            auto pPkgOptions = uc2::PkgFileOptions::Create();
+            pPkgOptions->SetTfoPkg(true);
+
+            auto pPkgFile = uc2::PkgFile::Create(
+                tfo::PkgFilename, vFileBuffer, tfo::PackageEntryKey,
+                tfo::PackageFileKey, pPkgOptions.get());
+
+            pPkgFile->DecryptHeader();
+            pPkgFile->Parse();
+
+            REQUIRE(pPkgFile->GetEntries().size() == tfo::PackageFileCount2);
+
+            constexpr const std::uint64_t iEncryptedFileLen = 16;
+            constexpr const std::uint64_t iTargetFileLen = 8;
+
+            auto&& entry = pPkgFile->GetEntries().at(0);
+            REQUIRE(entry->IsEncrypted());
+            REQUIRE(entry->GetEncryptedSize() == iEncryptedFileLen);
+            REQUIRE(entry->GetDecryptedSize() == iTargetFileLen);
+            REQUIRE(entry->GetFilePath() == "/r1/datarevision.txt");
+            auto [fileData, fileDataLen] = entry->DecryptFile(entry->GetDecryptedSize());
+
+            REQUIRE(fileDataLen == iTargetFileLen);
+            REQUIRE(strcmp(reinterpret_cast<char*>(fileData), "17973 \r\n") == 0);
+        }
+        catch (const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+            throw e;
+        }
+    }
 }
 
 TEST_CASE("TFO Pkg file can be decrypted and parsed using C bindings",
