@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string_view>
+#include <cstring>
 
 #include <uc2/uc2.h>
 #include <uc2/uc2.hpp>

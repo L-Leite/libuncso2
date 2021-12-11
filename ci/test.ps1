@@ -6,7 +6,7 @@ $isMingwBuild = $curBuildCombo -eq 'windows-mingw'
 $isMsvcBuild = $curBuildCombo -eq 'windows-msvc'
 
 # go to the test binary dir
-Push-Location ./build/tests    
+Push-Location ./build/tests
 
 if ($isLinux) {
     ./pkg_test
