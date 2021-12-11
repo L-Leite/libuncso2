@@ -59,5 +59,19 @@ struct PkgEntryHeader_t
 static_assert(sizeof(PkgEntryHeader_t) == 288,
               "The pkg entry header's size must be 288 bytes long");
 
+struct PkgEntryHeaderTfo_t
+{
+    char szFilePath[260 + 1];
+    std::uint64_t iOffset;
+    std::uint64_t iEncryptedSize;
+    std::uint64_t iDecryptedSize;
+    std::uint8_t Unknown285;
+    std::uint8_t bIsEncrypted;
+    std::uint8_t Pad[1];
+};
+
+static_assert(sizeof(PkgEntryHeader_t) == 288,
+              "The TFO pkg entry header's size must be 288 bytes long");
+
 #pragma pack(pop)
 }  // namespace uc2

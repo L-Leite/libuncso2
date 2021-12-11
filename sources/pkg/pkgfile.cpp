@@ -166,11 +166,13 @@ std::uint64_t PkgFileImpl::GetFullHeaderSize()
 {
     if (this->m_bIsTfoPkg == true)
     {
-        return PkgFileImpl::GetFullHeaderSizeInternal<PkgHeaderTfo_t>();
+        return PkgFileImpl::GetFullHeaderSizeInternal<PkgHeaderTfo_t,
+                                                      PkgEntryHeaderTfo_t>();
     }
     else
     {
-        return PkgFileImpl::GetFullHeaderSizeInternal<PkgHeader_t>();
+        return PkgFileImpl::GetFullHeaderSizeInternal<PkgHeader_t,
+                                                      PkgEntryHeader_t>();
     }
 }
 
@@ -179,7 +181,7 @@ std::string_view PkgFileImpl::GetMd5Hash()
     return this->m_szMd5Hash;
 }
 
-template <typename PkgHeaderType>
+template <typename PkgHeaderType, typename PkgEntryHeaderType>
 std::uint64_t PkgFileImpl::GetFullHeaderSizeInternal() const
 {
     if (this->IsHeaderDecryptedInternal<PkgHeaderType>() == false)
@@ -197,7 +199,7 @@ std::uint64_t PkgFileImpl::GetFullHeaderSizeInternal() const
     auto pPkgHeader = this->GetPkgHeader<PkgHeaderType>();
 
     return PKG_HEADER_SKIP_HASH_OFFSET + sizeof(PkgHeaderType) +
-           pPkgHeader->iEntries * sizeof(PkgEntryHeader_t);
+           pPkgHeader->iEntries * sizeof(PkgEntryHeaderType);
 }
 
 bool PkgFileImpl::DecryptHeader()
@@ -241,11 +243,11 @@ void PkgFileImpl::Parse()
 
     if (this->m_bIsTfoPkg == true)
     {
-        this->ParseEntries<PkgHeaderTfo_t>();
+        this->ParseEntries<PkgHeaderTfo_t, PkgEntryHeaderTfo_t>();
     }
     else
     {
-        this->ParseEntries<PkgHeader_t>();
+        this->ParseEntries<PkgHeader_t, PkgEntryHeader_t>();
     }
 }
 
@@ -277,7 +279,7 @@ bool PkgFileImpl::DecryptHeaderInternal()
     return true;
 }
 
-template <typename PkgHeaderType>
+template <typename PkgHeaderType, typename PkgEntryHeaderType>
 void PkgFileImpl::ParseEntries()
 {
     if (this->IsHeaderDecryptedInternal<PkgHeaderType>() == false)
@@ -290,19 +292,19 @@ void PkgFileImpl::ParseEntries()
         this->m_FileDataView.subspan(0, PKG_HEADER_SKIP_HASH_OFFSET).data());
 
     auto pPkgHeader = this->GetPkgHeader<PkgHeaderType>();
-    auto pEntries = this->GetEntriesHeader<PkgHeaderType>();
+    auto pEntries = this->GetEntriesHeader<PkgHeaderType, PkgEntryHeaderType>();
 
     const std::uint64_t iDataStartOffset =
         PKG_HEADER_SKIP_HASH_OFFSET + sizeof(PkgHeaderType) +
-        pPkgHeader->iEntries * sizeof(PkgEntryHeader_t);
+        pPkgHeader->iEntries * sizeof(PkgEntryHeaderType);
 
     CAesCipher cipher;
     CDecryptor decryptor(&cipher, this->m_szHashedEntryKey, false);
 
     for (std::uint32_t i = 0; i < pPkgHeader->iEntries; i++)
     {
-        PkgEntryHeader_t* entry = &pEntries[i];
-        decryptor.DecryptInBuffer(entry, sizeof(PkgEntryHeader_t));
+        PkgEntryHeaderType* entry = &pEntries[i];
+        decryptor.DecryptInBuffer(entry, sizeof(PkgEntryHeaderType));
 
         auto pNewEntry = std::make_unique<PkgEntryImpl>(
             entry->szFilePath, iDataStartOffset + entry->iOffset,
@@ -333,12 +335,12 @@ PkgHeaderType* PkgFileImpl::GetPkgHeader() const
     return reinterpret_cast<PkgHeaderType*>(data);
 }
 
-template <typename PkgHeaderType>
-PkgEntryHeader_t* PkgFileImpl::GetEntriesHeader() const
+template <typename PkgHeaderType, typename PkgEntryHeaderType>
+PkgEntryHeaderType* PkgFileImpl::GetEntriesHeader() const
 {
     std::uint64_t data =
         reinterpret_cast<std::uint64_t>(this->m_FileDataView.data());
     data += PKG_HEADER_SKIP_HASH_OFFSET + sizeof(PkgHeaderType);
-    return reinterpret_cast<PkgEntryHeader_t*>(data);
+    return reinterpret_cast<PkgEntryHeaderType*>(data);
 }
 }  // namespace uc2

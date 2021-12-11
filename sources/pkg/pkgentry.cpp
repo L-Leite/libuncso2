@@ -70,6 +70,13 @@ std::pair<std::uint8_t*, std::uint64_t> PkgEntryImpl::DecryptFile(
             "libuncso2: The entry's file data is empty.");
     }
 
+    if (iBytesToDecrypt > this->m_iDecryptedSize)
+    {
+        throw std::invalid_argument(
+            "libuncso2: The amount of bytes requested to decrypt is bigger "
+            "than decrypted file size.");
+    }
+
     const bool bDecryptAll = iBytesToDecrypt == 0;
     const std::uint64_t iAlignedBytes =
         bDecryptAll == true ? 0 : RoundNumberToBlock(iBytesToDecrypt);
@@ -142,7 +149,8 @@ std::pair<std::uint8_t*, std::uint64_t> PkgEntryImpl::HandleEncryptedFile(
     const std::uint64_t iTargetEncDataSize =
         bDecryptAll == true ? this->m_iEncryptedSize : iBytesToDecrypt;
     const std::uint64_t iTargetDecDataSize =
-        bDecryptAll == true ? this->m_iDecryptedSize : iBytesToDecrypt;
+        bDecryptAll == true ? this->m_iDecryptedSize :
+                              std::min(this->m_iDecryptedSize, iBytesToDecrypt);
 
     // The data must be decrypted each PKG_DATA_BLOCK_SIZE (which at the
     // time of writing this is 65536), or else only the first 65536

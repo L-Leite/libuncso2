@@ -45,7 +45,7 @@ public:
                             std::string szDataKey = {},
                             PkgFileOptions* pOptions = nullptr);
 
-    template <typename PkgHeaderType>
+    template <typename PkgHeaderType, typename PkgEntryHeaderType>
     std::uint64_t GetFullHeaderSizeInternal() const;
 
 private:
@@ -60,7 +60,7 @@ private:
 
     template <typename PkgHeaderType>
     bool DecryptHeaderInternal();
-    template <typename PkgHeaderType>
+    template <typename PkgHeaderType, typename PkgEntryHeaderType>
     void ParseEntries();
 
     void UpdateEntriesDataView();
@@ -68,8 +68,8 @@ private:
     template <typename PkgHeaderType>
     PkgHeaderType* GetPkgHeader() const;
 
-    template <typename PkgHeaderType>
-    PkgEntryHeader_t* GetEntriesHeader() const;
+    template <typename PkgHeaderType, typename PkgEntryHeaderType>
+    PkgEntryHeaderType* GetEntriesHeader() const;
 
 private:
     std::string m_szFilename;
