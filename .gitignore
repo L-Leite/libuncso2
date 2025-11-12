@@ -37,5 +37,25 @@
 # Generated documentation
 /docs
 
-# VSCode configs
+# VS Code settings
 /.vscode
+/.cache
+
+# Visual Studio work directory
+/.vs/
+# Visual Studio build directory
+/out/
+
+# CMake build directory
+/build
+
+# AppImage executables
+*.AppImage
+
+/CMakeUserPresets.json
+
+# Arch Linux
+/.SRCINFO
+/src
+/pkg
+*.tar.zst

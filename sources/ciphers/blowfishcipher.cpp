@@ -1,8 +1,8 @@
 #include "ciphers/blowfishcipher.hpp"
 
-#include <blowfish.h>
-#include <filters.h>
-#include <modes.h>
+#include <cryptopp/blowfish.h>
+#include <cryptopp/filters.h>
+#include <cryptopp/modes.h>
 
 namespace uc2
 {
@@ -18,8 +18,8 @@ void CBlowfishCipher::Initialize(std::string_view key, std::string_view iv,
     this->m_bPaddingEnabled = paddingEnabled;
 }
 
-std::uint64_t CBlowfishCipher::Decrypt(gsl::span<const std::uint8_t> inData,
-                                       gsl::span<std::uint8_t> outBuffer)
+std::uint64_t CBlowfishCipher::Decrypt(std::span<const std::uint8_t> inData,
+                                       std::span<std::uint8_t> outBuffer)
 {
     CryptoPP::CBC_Mode<CryptoPP::Blowfish>::Decryption dec;
 

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.13.0)
+cmake_minimum_required(VERSION 3.13)
 
 if(POLICY CMP0077)
   cmake_policy(SET CMP0077 NEW)
@@ -31,9 +31,6 @@ endif()
 #
 option(PKG_BUILD_SHARED "Build libuncso2 as a shared library" ON)
 option(PKG_BUILD_TESTS "Build tests" ${PKG_IS_STANDALONE})
-option(PKG_DEPS_AS_SHARED_LIBS
-       "Build libuncso2 dependencies as shared libraries" ON)
-option(PKG_USE_CLANG_FSAPI "Use libc++fs when available" OFF)
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake_modules")
 
@@ -48,7 +45,6 @@ set(PKG_GENERATED_DIR "${CMAKE_BINARY_DIR}/generated")
 
 set(PKG_LIB_CRYPTOPP_DIR "${PKG_LIBS_DIR}/cryptopp")
 set(PKG_LIB_CRYPTOPP_CMAKE_DIR "${PKG_LIBS_DIR}/cryptopp-cmake")
-set(PKG_LIB_GSL_DIR "${PKG_LIBS_DIR}/gsl-lite")
 set(PKG_LIB_LZMA_DIR "${PKG_LIBS_DIR}/lzma")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -69,29 +65,8 @@ generate_libuc2_version(VERSION_FILE
 # Dependencies
 #
 
-# Setup Crypto++'s CMake files
-configure_file("${PKG_LIB_CRYPTOPP_CMAKE_DIR}/CMakeLists.txt"
-               "${PKG_LIB_CRYPTOPP_DIR}/" COPYONLY)
-configure_file("${PKG_LIB_CRYPTOPP_CMAKE_DIR}/cryptopp-config.cmake"
-               "${PKG_LIB_CRYPTOPP_DIR}/" COPYONLY)
-
-# Disable Crypto++ testing
-set(BUILD_TESTING FALSE CACHE BOOL "" FORCE)
-
-# Only build Crypto++ either static or shared libraries
-if(NOT MSVC)
-  if(PKG_DEPS_AS_SHARED_LIBS)
-    # set(BUILD_STATIC FALSE CACHE BOOL "" FORCE)
-  else()
-    set(BUILD_SHARED FALSE CACHE BOOL "" FORCE)
-  endif()
-else()
-  # Don't build FIPS DLL
-  set(BUILD_SHARED FALSE CACHE BOOL "" FORCE)
-endif()
-
-add_subdirectory("${PKG_LIB_CRYPTOPP_DIR}")
-set(CryptoPP_INCLUDE_DIRS "${PKG_LIB_CRYPTOPP_DIR}")
+set(CRYPTOPP_SOURCES "${PKG_LIB_CRYPTOPP_DIR}")
+add_subdirectory("${PKG_LIB_CRYPTOPP_CMAKE_DIR}")
 
 # Enable weak namespace for MD5
 add_definitions(-DCRYPTOPP_ENABLE_NAMESPACE_WEAK=1)
@@ -170,7 +145,7 @@ source_group("Source Files" FILES ${PKG_SOURCES_BASE})
 source_group("Public Header Files" FILES ${PKG_PUBLIC_HEADERS_BASE})
 source_group("Header Files" FILES ${PKG_HEADERS_BASE})
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_definitions(-DCMAKE_EXPORT_COMPILE_COMMANDS=ON)
@@ -194,7 +169,7 @@ set_target_properties(uncso2 PROPERTIES VERSION ${LIB_VERSION})
 # Enable all warnings
 #
 if(MSVC)
-  target_compile_options(uncso2 PRIVATE /W4)
+  target_compile_options(uncso2 PRIVATE /DWIN32 /D_WINDOWS /W4 /EHsc)
 else()
   target_compile_options(uncso2 PRIVATE -Wall -Wextra -pedantic)
 endif()
@@ -205,10 +180,8 @@ endif()
 target_include_directories(uncso2 PRIVATE "headers")
 target_include_directories(uncso2 PRIVATE "${PKG_PUBLIC_HEADERS_DIR}")
 
-target_include_directories(uncso2
-                           PRIVATE "${LZMA_INCLUDE_DIR}"
-                                   "${CryptoPP_INCLUDE_DIRS}"
-                                   "${PKG_LIB_GSL_DIR}/include")
+target_include_directories(uncso2 PRIVATE "external")
+target_include_directories(uncso2 PRIVATE "${LZMA_INCLUDE_DIR}")
 
 # the generated version header's directory
 target_include_directories(uncso2 PRIVATE ${PKG_GENERATED_DIR})
@@ -217,26 +190,7 @@ target_include_directories(uncso2 PRIVATE ${PKG_GENERATED_DIR})
 # Setup library directories
 #
 
-if(PKG_USE_CLANG_FSAPI)
-  message(STATUS "libuncso2: Using libc++fs")
-  target_link_libraries(uncso2 c++fs)
-elseif(NOT MSVC)
-  message(STATUS "libuncso2: Using stdlibc++fs")
-  target_link_libraries(uncso2 stdc++fs)
-endif()
-
-if(NOT MSVC)
-  if(PKG_DEPS_AS_SHARED_LIBS)
-    target_link_libraries(uncso2 cryptopp-shared)
-  else()
-    target_link_libraries(uncso2 cryptopp-static)
-  endif()
-else()
-  # Don't use FIPS DLL
-  target_link_libraries(uncso2 cryptopp-static)
-endif()
-
-target_link_libraries(uncso2 lzma)
+target_link_libraries(uncso2 lzma cryptopp)
 
 #
 # Set include directory for dependent projects
@@ -256,3 +210,10 @@ if(PKG_BUILD_TESTS)
   message("libuncso2: Building tests")
   add_subdirectory(tests)
 endif()
+
+#
+# Installation rules
+#
+
+install(TARGETS uncso2 DESTINATION lib)
+install(DIRECTORY ${PKG_PUBLIC_HEADERS_ROOT_DIR}/ DESTINATION include/libuncso2)

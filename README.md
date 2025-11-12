@@ -1,17 +1,23 @@
 # libuncso2
 
+[![GitHub License](https://img.shields.io/github/license/harmonytf/libuncso2)](https://raw.githubusercontent.com/harmonytf/libuncso2/master/COPYING)
+[![GitHub Release](https://img.shields.io/github/v/release/harmonytf/libuncso2)](https://github.com/harmonytf/libuncso2/releases/latest)
+[![AUR Version](https://img.shields.io/aur/version/libuncso2?logo=archlinux)](https://aur.archlinux.org/packages/libuncso2)
+[![AUR-BIN Version](https://img.shields.io/aur/version/libuncso2-bin?logo=archlinux&label=aur-bin)](https://aur.archlinux.org/packages/libuncso2-bin)
+
 A library to decrypt and parse PKG files used by Nexon's videogame Counter-Strike Online 2.
 
 PKG is an encrypted archive file format used in Counter-Strike Online 2 and Titanfall Online to store the games' file data.
 
 It's based on the ekey's reversing work of at [XeNTaX's forums](https://forum.xentax.com/viewtopic.php?f=21&t=11117).
 
-Used as the back-end for the GUI program [UnCSO2](https://github.com/L-Leite/UnCSO2).
+Used as the back-end for the GUI program [UnCSO2](https://github.com/harmonytf/UnCSO2).
 
 Tested on:
-- GNU/Linux - GCC 8.3.0 (32 and 64 bits)
-- GNU/Linux - Clang 8.0.0 (32 and 64 bits)
-- Windows 10 - MSVC 2017 (32 and 64 bits)
+
+- GNU/Linux - GCC 15.2.1 (64 bits)
+- GNU/Linux - Clang 21.1.4 (64 bits)
+- Windows 10 - MSVC 2022 (64 bits)
 
 ## Features
 
@@ -19,10 +25,6 @@ Tested on:
 - Parse PKG index files.
 - Decrypt '.e*' files, such as files with .etxt, .escv or .ecfg extensions.
 - Decompress LZMA deflated textures.
-
-## Build status
-
-[![Build status](https://ci.appveyor.com/api/projects/status/oygibb8s9c3xxdba/branch/master?svg=true)](https://ci.appveyor.com/project/L-Leite/libuncso2/branch/master)
 
 ## Examples
 
@@ -188,8 +190,8 @@ add_subdirectory("libuncso2")
 file(GLOB SOMEAPP_ALL_SOURCES
     "main.cpp")
 
-# C++17 is required
-set(CMAKE_CXX_STANDARD 17)
+# C++20 is required
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(someapp ${SOMEAPP_ALL_SOURCES})
@@ -204,7 +206,6 @@ libuncso2 uses the following libraries:
 
 - [Catch2](https://github.com/catchorg/Catch2) (used in the test application), Boost Software License.
 - [Crypto++](https://www.cryptopp.com/), Public domain.
-- [GSL Lite](https://github.com/martinmoene/gsl-lite), MIT license.
 - [LZMA SDK](https://www.7-zip.org/sdk.html), Public domain.
 
 ## License

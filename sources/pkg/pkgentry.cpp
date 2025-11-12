@@ -37,7 +37,7 @@ PkgEntryImpl::PkgEntryImpl(std::string_view szFilePath,
                            std::uint64_t pkgFileOffset,
                            std::uint64_t encryptedSize,
                            std::uint64_t decryptedSize, bool isEncrypted,
-                           gsl::span<std::uint8_t> fileDataView,
+                           std::span<std::uint8_t> fileDataView,
                            std::string_view szvPkgKey /*= {}*/)
     : m_FileDataView(fileDataView), m_szFilePath(MakeUnixSeparated(szFilePath)),
       m_iPkgFileOffset(pkgFileOffset), m_iEncryptedSize(encryptedSize),
@@ -68,6 +68,13 @@ std::pair<std::uint8_t*, std::uint64_t> PkgEntryImpl::DecryptFile(
     {
         throw std::invalid_argument(
             "libuncso2: The entry's file data is empty.");
+    }
+
+    if (iBytesToDecrypt > this->m_iDecryptedSize)
+    {
+        throw std::invalid_argument(
+            "libuncso2: The amount of bytes requested to decrypt is bigger "
+            "than decrypted file size.");
     }
 
     const bool bDecryptAll = iBytesToDecrypt == 0;
@@ -142,7 +149,8 @@ std::pair<std::uint8_t*, std::uint64_t> PkgEntryImpl::HandleEncryptedFile(
     const std::uint64_t iTargetEncDataSize =
         bDecryptAll == true ? this->m_iEncryptedSize : iBytesToDecrypt;
     const std::uint64_t iTargetDecDataSize =
-        bDecryptAll == true ? this->m_iDecryptedSize : iBytesToDecrypt;
+        bDecryptAll == true ? this->m_iDecryptedSize :
+                              std::min(this->m_iDecryptedSize, iBytesToDecrypt);
 
     // The data must be decrypted each PKG_DATA_BLOCK_SIZE (which at the
     // time of writing this is 65536), or else only the first 65536
@@ -176,13 +184,13 @@ std::pair<std::uint8_t*, std::uint64_t> PkgEntryImpl::HandlePlainFile(
     return { pFileStart, iTargetDecDataSize };
 }
 
-void PkgEntryImpl::SetDataBufferView(gsl::span<std::uint8_t> newDataView)
+void PkgEntryImpl::SetDataBufferView(std::span<std::uint8_t> newDataView)
 {
     this->m_FileDataView = newDataView;
 }
 
 void PkgEntryImpl::ReleaseDataBufferView()
 {
-    this->m_FileDataView = gsl::span<std::uint8_t>();
+    this->m_FileDataView = std::span<std::uint8_t>();
 }
 }  // namespace uc2
