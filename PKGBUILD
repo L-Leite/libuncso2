@@ -1,5 +1,5 @@
 pkgname=libuncso2
-pkgver=1.2.0
+pkgver=1.2.1
 pkgrel=1
 pkgdesc="Backend for UnCSO2"
 arch=(any)
