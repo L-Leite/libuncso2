@@ -15,6 +15,7 @@
 #define _LZMADECODER_CPP
 
 #include <assert.h>
+#include <cstdint>
 #include <algorithm>
 #include <memory>
 
